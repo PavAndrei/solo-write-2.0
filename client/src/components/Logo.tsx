@@ -1,6 +1,6 @@
 export const Logo = () => {
   return (
-    <div className="flex cursor-pointer">
+    <div className="flex">
       <div className="rounded-full py-0.5 px-2 bg-gradient-to-r from-gray-800 to-gray-300">
         <span className="text-gray-100 text-xl md:text-2xl font-semibold">Solo</span>
       </div>
