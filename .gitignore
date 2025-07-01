@@ -1,0 +1,28 @@
+# Общие игнорируемые файлы
+.DS_Store
+Thumbs.db
+*.log
+
+# Игнорируем окружения
+.env
+.env.local
+
+# Игнорируем node_modules и сборки
+client/node_modules/
+client/.env
+client/.env.local
+client/dist/
+client/build/
+
+server/node_modules/
+server/.env
+server/.env.local
+server/dist/
+server/build/
+
+# Игнор для системных директорий
+client/.next/
+server/.next/
+
+client/**/*.tsbuildinfo
+server/**/*.tsbuildinfo

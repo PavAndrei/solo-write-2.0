@@ -16,7 +16,7 @@ export const Search = () => {
       >
         <IoSearchSharp />
       </Button>
-      <div className="md:order-2 md:ml-auto md:mr-0 order-4 w-full md:max-w-[400px]">
+      <div className="md:order-2 md:ml-auto md:mr-0 order-4 w-full md:max-w-[300px] lg:max-w-[400px] xl:max-w-[500px]">
         <AnimationProvider
           transition={{ duration: 0.3 }}
           keyValue={isSearchFieldVisible.toString()}
@@ -30,7 +30,7 @@ export const Search = () => {
             <input
               type="text"
               placeholder="Search..."
-              className="outline-0 peer bg-transparent w-full placeholder:text-gray-400 placeholder:text-sm md:placeholder:text-base"
+              className="outline-0 peer bg-transparent w-full placeholder:text-gray-400 placeholder:text-sm md:placeholder:text-base text-sm md:text-base lg:text-lg pl-2"
             />
             <IoSearchSharp className="text-gray-400 peer-focus:text-gray-700 transition-colors duration-300 dark:peer-focus:text-gray-300" />
           </label>

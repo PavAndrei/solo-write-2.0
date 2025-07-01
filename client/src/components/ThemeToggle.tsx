@@ -11,7 +11,10 @@ export const ThemeToggle = () => {
   const theme = useAppSelector((state) => state.theme.themeColor);
 
   return (
-    <Button className="md:order-4 order-2 ml-auto mr-0" onClickFunc={() => dispatch(toggleTheme())}>
+    <Button
+      className="order-2 ml-auto mr-0 md:order-4 md:py-2.5"
+      onClickFunc={() => dispatch(toggleTheme())}
+    >
       {theme === 'light' ? <FaMoon /> : <LuSun />}
     </Button>
   );
