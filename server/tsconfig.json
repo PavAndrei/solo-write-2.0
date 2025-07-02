@@ -1,17 +1,13 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ES2022",
+    "target": "ES2020",
+    "module": "commonjs",
     "moduleResolution": "node",
-    "outDir": "dist",
-    "rootDir": "src",
-    "strict": true,
     "esModuleInterop": true,
-    "moduleDetection": "force",
-    // "allowImportingTsExtensions": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "noEmit": false
+    "strict": true,
+    "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src", "env.d.ts"],
+  "exclude": ["node_modules", "dist"]
 }
