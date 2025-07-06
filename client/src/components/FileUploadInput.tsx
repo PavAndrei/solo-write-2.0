@@ -31,8 +31,6 @@ export const FileUploadInput: FC<FileUploadInputProps> = ({
     }
   }, [file]);
 
-  // const preview = file && URL.createObjectURL(file);
-
   return (
     <>
       <input

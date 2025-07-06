@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { hash } from 'bcryptjs';
+import { compare, hash } from 'bcryptjs';
+import jwt, { Secret } from 'jsonwebtoken';
 
 import User from '../models/User.model';
 import { errorHandler } from '../middlewares/handleErrors';
@@ -45,6 +46,49 @@ export const signup = async (
       message: 'Your account has been created successfully',
       user: userWithoutPassword,
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const signin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email, password } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email }).select('+password');
+
+    if (!existingUser) {
+      throw errorHandler(401, 'Invalid email or password');
+    }
+
+    const result = await compare(password, existingUser.password);
+
+    if (!result) {
+      throw errorHandler(401, 'Invalid email or password');
+    }
+
+    const token = jwt.sign(
+      {
+        userId: existingUser._id,
+        email: existingUser.email,
+        verified: existingUser.verified,
+        role: existingUser.role,
+      },
+      process.env.TOKEN_SECRET as Secret,
+      { expiresIn: '8h' }
+    );
+
+    return res
+      .status(200)
+      .cookie('access_token', token, {
+        httpOnly: true,
+        sameSite: 'lax',
+      })
+      .json({ success: true, message: 'Log in successfully' });
   } catch (err) {
     next(err);
   }
