@@ -1,32 +1,33 @@
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, FC, useRef } from 'react';
 import { AnimationProvider } from './AnimationProvider';
 import { TiDelete } from 'react-icons/ti';
 
-export const FileUploadInput = () => {
+interface FileUploadInputProps {
+  name: string;
+  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  file?: File | null | undefined;
+  handleFileRemove: () => void;
+}
+
+export const FileUploadInput: FC<FileUploadInputProps> = ({
+  name,
+  file,
+  handleChange,
+  handleFileRemove,
+}) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState('');
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-
-    if (files && files.length > 0) {
-      const avatar = files[0];
-      setPreview(URL.createObjectURL(avatar));
-      setFile(avatar);
-
-      console.log(avatar);
-    }
-  };
+  const preview = file && URL.createObjectURL(file);
 
   return (
     <>
       <input
         ref={fileInputRef}
         type="file"
+        name={name}
+        onChange={handleChange}
         className="hidden"
         accept="image/*"
-        onChange={handleFileChange}
       />
 
       <div className="flex flex-col gap-1.5 relative">
@@ -51,8 +52,7 @@ export const FileUploadInput = () => {
                 className="absolute top-4 right-[30%] cursor-pointer text-5xl transition-colors duration-300 hover:text-rose-900 ease-in-out"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setPreview('');
-                  setFile(null);
+                  handleFileRemove();
                 }}
               />
             )}

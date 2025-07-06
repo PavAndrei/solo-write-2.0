@@ -1,25 +1,32 @@
-import { FC, useState, useRef } from 'react';
+import { FC, useRef, ChangeEvent } from 'react';
 import { FaCheck } from 'react-icons/fa';
 
 interface CustomCheckboxProps {
   labelText: string;
   name: string;
+  isChecked: boolean;
+  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const CustomCheckbox: FC<CustomCheckboxProps> = ({ name, labelText }) => {
+export const CustomCheckbox: FC<CustomCheckboxProps> = ({
+  name,
+  isChecked,
+  handleChange,
+  labelText,
+}) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
-  const [isChecked, setIsChecked] = useState<boolean>(false);
+  // const [isChecked, setIsChecked] = useState<boolean>(false);
 
-  const handleChange = () => {
-    setIsChecked((prev) => !prev);
-  };
+  // const handleChange = () => {
+  //   setIsChecked((prev) => !prev);
+  // };
 
   return (
     <>
       <input
         ref={checkboxRef}
         checked={isChecked}
-        onChange={handleChange}
+        onChange={(e) => handleChange(e)}
         name={name}
         type="checkbox"
         className="hidden"
