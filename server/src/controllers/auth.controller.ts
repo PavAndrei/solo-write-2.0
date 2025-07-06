@@ -3,15 +3,10 @@ import { hash } from 'bcryptjs';
 
 import User from '../models/User.model';
 import { errorHandler } from '../middlewares/handleErrors';
-
-interface SignupRequestBody {
-  username: string;
-  email: string;
-  password: string;
-}
+import { ImageRequest } from '../middlewares/uploadImages';
 
 export const signup = async (
-  req: Request<{}, {}, SignupRequestBody>,
+  req: ImageRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -37,6 +32,7 @@ export const signup = async (
       username,
       email,
       password: hashedPassword,
+      avatarUrl: req.imageUrl || null,
     });
 
     const result = await newUser.save();
