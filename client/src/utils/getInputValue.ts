@@ -1,3 +1,7 @@
+const SKIP = Symbol('SKIP');
+
+export { SKIP };
+
 export const getInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
   const { type, checked, value, files } = e.target;
 
@@ -5,7 +9,8 @@ export const getInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     case 'checkbox':
       return checked;
     case 'file':
-      return files?.[0] ?? null;
+      if (!files || files.length === 0) return SKIP;
+      return files[0];
     default:
       return value;
   }

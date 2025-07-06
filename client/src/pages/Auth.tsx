@@ -5,7 +5,8 @@ import { TextField } from '../components/TextField';
 import { CustomCheckbox } from '../components/CustomCheckbox';
 import { Button } from '../components/Button';
 import { FileUploadInput } from '../components/FileUploadInput';
-import { getInputValue } from '../utils/getInputValue';
+import { getInputValue, SKIP } from '../utils/getInputValue';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthProps {
   type: 'sign-in' | 'sign-up';
@@ -32,10 +33,14 @@ export const Auth: FC<AuthProps> = ({ type }) => {
     terms: false,
   });
 
+  const navigate = useNavigate();
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name } = e.target;
 
     const newValue = getInputValue(e);
+
+    if (newValue === SKIP) return;
 
     setAuthData((prev) => ({
       ...prev,
@@ -72,6 +77,10 @@ export const Auth: FC<AuthProps> = ({ type }) => {
 
     const data = await res.json();
     console.log(data);
+
+    if (data.success) {
+      return navigate('/');
+    }
   };
 
   return (

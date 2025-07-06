@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useRef } from 'react';
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import { AnimationProvider } from './AnimationProvider';
 import { TiDelete } from 'react-icons/ti';
 
@@ -16,8 +16,22 @@ export const FileUploadInput: FC<FileUploadInputProps> = ({
   handleFileRemove,
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [preview, setPreview] = useState('');
 
-  const preview = file && URL.createObjectURL(file);
+  useEffect(() => {
+    if (!file) {
+      setPreview('');
+    } else {
+      const objectUrl = URL.createObjectURL(file);
+      setPreview(objectUrl);
+
+      return () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+    }
+  }, [file]);
+
+  // const preview = file && URL.createObjectURL(file);
 
   return (
     <>
