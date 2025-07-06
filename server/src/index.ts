@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { authRouter } from './routes/auth.route';
+import { globalErrorHandler } from './middlewares/handleErrors';
 
 dotenv.config();
 
@@ -41,3 +42,5 @@ mongoose
 app.listen(PORT, () => {
   console.log(`✅ Server is running on port ${PORT}`);
 });
+
+app.use(globalErrorHandler);
