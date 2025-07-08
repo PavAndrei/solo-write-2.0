@@ -4,6 +4,7 @@ import jwt, { Secret } from 'jsonwebtoken';
 
 import User from '../models/User.model';
 import { errorHandler } from '../middlewares/handleErrors';
+import { SigninInput } from '../utils/validations/auth.schemas';
 import { ImageRequest } from '../middlewares/uploadImages';
 
 export const signup = async (
@@ -52,7 +53,7 @@ export const signup = async (
 };
 
 export const signin = async (
-  req: Request,
+  req: Request<{}, {}, SigninInput>,
   res: Response,
   next: NextFunction
 ) => {
