@@ -1,11 +1,11 @@
-import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { AnimationProvider } from '../components/AnimationProvider';
 import { Container } from '../components/Container';
 import { TextField } from '../components/TextField';
 import { CustomCheckbox } from '../components/CustomCheckbox';
 import { Button } from '../components/Button';
 import { FileUploadInput } from '../components/FileUploadInput';
-import { getInputValue, SKIP } from '../utils/getInputValue';
 import { useNavigate } from 'react-router-dom';
 import { signIn, signUp } from '../api/apiAuth';
 
@@ -13,142 +13,145 @@ interface AuthProps {
   type: 'sign-in' | 'sign-up';
 }
 
-interface AuthFormData {
-  username: string;
+interface AuthFormInputs {
+  username?: string;
   email: string;
   password: string;
-  repeatPassword: string;
-  file?: File | null;
-  terms: boolean;
+  repeatPassword?: string;
+  terms?: boolean;
+  file?: FileList;
 }
-
-const initialAuthFormDataState = {
-  username: '',
-  email: '',
-  password: '',
-  repeatPassword: '',
-  file: null,
-  terms: false,
-};
 
 export const Auth: FC<AuthProps> = ({ type }) => {
   const title = type === 'sign-up' ? 'Join Us Here' : 'Welcome Back';
-
-  const [authData, setAuthData] = useState<AuthFormData>(initialAuthFormDataState);
-
-  useEffect(() => {
-    setAuthData(initialAuthFormDataState);
-  }, [type]);
-
   const navigate = useNavigate();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name } = e.target;
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<AuthFormInputs>();
 
-    const newValue = getInputValue(e);
+  const fileList = watch('file');
 
-    if (newValue === SKIP) return;
+  useEffect(() => {
+    reset();
+  }, [type, reset]);
 
-    setAuthData((prev) => ({
-      ...prev,
-      [name]: newValue,
-    }));
-  };
-
-  const handleFileRemove = () => {
-    setAuthData((prev) => ({
-      ...prev,
-      file: null,
-    }));
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    let data;
+  const onSubmit: SubmitHandler<AuthFormInputs> = async (data) => {
     if (type === 'sign-up') {
-      const signUpData = new FormData();
-      Object.entries(authData).forEach(([key, value]) => {
-        if (key === 'username' || key === 'email' || key === 'password') {
-          signUpData.append(key, value);
-        }
-        if (key === 'file') {
-          signUpData.append('image', value);
-        }
-      });
-      data = await signUp(signUpData);
+      if (data.password !== data.repeatPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+      if (!data.terms) {
+        alert('You must agree to the terms');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('username', data.username!);
+      formData.append('email', data.email);
+      formData.append('password', data.password);
+      if (data.file?.[0]) {
+        formData.append('image', data.file[0]);
+      }
+
+      const response = await signUp(formData);
+      if (response.success) navigate('/');
     }
 
     if (type === 'sign-in') {
-      const signInData = {
-        email: authData.email,
-        password: authData.password,
-      };
-      data = await signIn(signInData);
+      const response = await signIn({
+        email: data.email,
+        password: data.password,
+      });
+      if (response.success) navigate('/');
     }
+  };
 
-    if (data?.success) {
-      navigate('/');
-    }
+  const handleFileRemove = () => {
+    setValue('file', undefined); // сбросить файл
   };
 
   return (
     <AnimationProvider keyValue={type}>
       <Container>
-        <section className="py-[60px] md:py-[100px] xl:py[120px]">
+        <section className="py-[60px] md:py-[100px] xl:py-[120px]">
           <div className="flex flex-col mx-auto max-w-[80%] md:max-w-[450px]">
             <h1 className="text-center text-3xl md:text-4xl lg:text-5xl font-bold mb-10">
               {title}
             </h1>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-4">
                 {type === 'sign-up' && (
                   <TextField
-                    name="username"
-                    value={authData.username}
-                    handleChange={handleChange}
                     labelText="Username"
                     placeholder="John Doe"
+                    {...register('username', { required: 'Username is required' })}
+                    error={errors.username?.message}
                   />
                 )}
+
                 <TextField
-                  name="email"
-                  value={authData.email}
-                  handleChange={handleChange}
                   labelText="Email"
                   placeholder="john.doe@gmail.com"
+                  {...register('email', { required: 'Email is required' })}
+                  error={errors.email?.message}
                 />
+
                 <TextField
-                  name="password"
-                  value={authData.password}
-                  handleChange={handleChange}
                   labelText="Password"
                   placeholder="********"
+                  type="password"
+                  {...register('password', { required: 'Password is required' })}
+                  error={errors.password?.message}
                 />
+
                 {type === 'sign-up' && (
                   <TextField
-                    name="repeatPassword"
-                    value={authData.repeatPassword}
-                    handleChange={handleChange}
                     labelText="Repeat Password"
                     placeholder="********"
+                    type="password"
+                    {...register('repeatPassword', {
+                      required: 'Repeat your password',
+                    })}
+                    error={errors.repeatPassword?.message}
                   />
                 )}
 
                 {type === 'sign-up' && (
-                  <FileUploadInput
+                  <Controller
                     name="file"
-                    handleChange={handleChange}
-                    file={authData.file}
-                    handleFileRemove={handleFileRemove}
+                    control={control}
+                    render={({ field }) => (
+                      <FileUploadInput
+                        name={field.name}
+                        value={field.value}
+                        onChange={field.onChange}
+                        removeFunction={handleFileRemove}
+                      />
+                    )}
                   />
                 )}
+
                 {type === 'sign-up' && (
-                  <CustomCheckbox
+                  <Controller
                     name="terms"
-                    isChecked={authData.terms}
-                    handleChange={handleChange}
-                    labelText="Do you agree with the terms?"
+                    control={control}
+                    defaultValue={false}
+                    render={({ field }) => (
+                      <CustomCheckbox
+                        name={field.name}
+                        value={field.value}
+                        onChange={field.onChange}
+                        labelText="Do you agree with the terms?"
+                      />
+                    )}
                   />
                 )}
 

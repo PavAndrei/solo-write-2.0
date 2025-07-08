@@ -1,34 +1,24 @@
-import { FC, useRef, ChangeEvent } from 'react';
+import { FC, useRef } from 'react';
 import { FaCheck } from 'react-icons/fa';
 
 interface CustomCheckboxProps {
-  labelText: string;
   name: string;
-  isChecked: boolean;
-  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  value: boolean | undefined;
+  onChange: (checked: boolean) => void;
+  labelText: string;
 }
 
-export const CustomCheckbox: FC<CustomCheckboxProps> = ({
-  name,
-  isChecked,
-  handleChange,
-  labelText,
-}) => {
+export const CustomCheckbox: FC<CustomCheckboxProps> = ({ name, value, onChange, labelText }) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
-  // const [isChecked, setIsChecked] = useState<boolean>(false);
-
-  // const handleChange = () => {
-  //   setIsChecked((prev) => !prev);
-  // };
 
   return (
     <>
       <input
         ref={checkboxRef}
-        checked={isChecked}
-        onChange={(e) => handleChange(e)}
-        name={name}
         type="checkbox"
+        name={name}
+        checked={value}
+        onChange={(e) => onChange(e.target.checked)}
         className="hidden"
       />
 
@@ -37,7 +27,7 @@ export const CustomCheckbox: FC<CustomCheckboxProps> = ({
         onClick={() => checkboxRef.current?.click()}
       >
         <div className="w-5 h-5 rounded-sm border-2 border-gray-500 flex items-center justify-center">
-          {isChecked && <FaCheck />}
+          {value && <FaCheck />}
         </div>
         <span className="italic text-base md:text-lg">{labelText}</span>
       </div>

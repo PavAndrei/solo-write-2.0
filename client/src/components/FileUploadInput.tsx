@@ -1,35 +1,35 @@
-import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { AnimationProvider } from './AnimationProvider';
 import { TiDelete } from 'react-icons/ti';
 
 interface FileUploadInputProps {
   name: string;
-  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  file?: File | null | undefined;
-  handleFileRemove: () => void;
+  value?: FileList;
+  onChange: (value: FileList | undefined) => void;
+  removeFunction: () => void;
 }
 
 export const FileUploadInput: FC<FileUploadInputProps> = ({
   name,
-  file,
-  handleChange,
-  handleFileRemove,
+  value,
+  onChange,
+  removeFunction,
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [preview, setPreview] = useState('');
+  const [preview, setPreview] = useState<string>('');
 
   useEffect(() => {
-    if (!file) {
+    if (!value?.[0]) {
       setPreview('');
     } else {
-      const objectUrl = URL.createObjectURL(file);
+      const objectUrl = URL.createObjectURL(value[0]);
       setPreview(objectUrl);
 
       return () => {
         URL.revokeObjectURL(objectUrl);
       };
     }
-  }, [file]);
+  }, [value]);
 
   return (
     <>
@@ -37,9 +37,9 @@ export const FileUploadInput: FC<FileUploadInputProps> = ({
         ref={fileInputRef}
         type="file"
         name={name}
-        onChange={handleChange}
         className="hidden"
         accept="image/*"
+        onChange={(e) => onChange(e.target.files || undefined)}
       />
 
       <div className="flex flex-col gap-1.5 relative">
@@ -56,15 +56,15 @@ export const FileUploadInput: FC<FileUploadInputProps> = ({
           <AnimationProvider keyValue={preview}>
             <img
               className="object-cover h-30 w-30 rounded-full border-2 border-dashed border-gray-400"
-              src={preview ? preview : 'https://placehold.co/120/E5E7EB/4B5563?text=Avatar'}
+              src={preview || 'https://placehold.co/120/E5E7EB/4B5563?text=Avatar'}
               alt=""
             />
-            {file && preview && (
+            {value?.[0] && preview && (
               <TiDelete
                 className="absolute top-4 right-[30%] cursor-pointer text-5xl transition-colors duration-300 hover:text-rose-900 ease-in-out"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleFileRemove();
+                  onChange(undefined);
                 }}
               />
             )}
