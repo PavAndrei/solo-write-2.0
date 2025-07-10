@@ -25,7 +25,7 @@ export const SignUpSchema = z
       .any()
       .refine(
         (files) => !files?.[0] || files[0]?.size <= MAX_FILE_SIZE,
-        'The size can be maximum 5MB.'
+        'The size can be maximum 1MB.'
       )
       .refine(
         (files) => !files?.[0] || ACCEPTED_IMAGE_TYPES.includes(files[0]?.type),
