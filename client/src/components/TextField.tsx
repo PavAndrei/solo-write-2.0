@@ -40,13 +40,13 @@ export const TextField = forwardRef<
       {isPassword && (
         <button
           type="button"
-          className="cursor-pointer"
+          className="cursor-pointer group"
           onClick={() => setIsPasswordVisible((prev) => !prev)}
         >
           {isPasswordVisible ? (
-            <IoEye className="absolute top-10 md:top-11 right-2" />
+            <IoEye className="absolute top-10 md:top-11 right-2 text-gray-500 dark:text-gray-500 group-focus:text-gray-950 hover:text-gray-950 transition-colors duration-300 ease-in-out" />
           ) : (
-            <IoEyeOff className="absolute top-10 md:top-11 right-2" />
+            <IoEyeOff className="absolute top-10 md:top-11 right-2 text-gray-500 dark:text-gray-500 group-focus:text-gray-950 hover:text-gray-950 transition-colors duration-300 ease-in-out" />
           )}
         </button>
       )}
@@ -55,5 +55,3 @@ export const TextField = forwardRef<
     </label>
   );
 });
-
-TextField.displayName = 'TextField';
