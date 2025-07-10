@@ -6,9 +6,16 @@ interface CustomCheckboxProps {
   value: boolean | undefined;
   onChange: (checked: boolean) => void;
   labelText: string;
+  error?: string;
 }
 
-export const CustomCheckbox: FC<CustomCheckboxProps> = ({ name, value, onChange, labelText }) => {
+export const CustomCheckbox: FC<CustomCheckboxProps> = ({
+  name,
+  value,
+  onChange,
+  labelText,
+  error,
+}) => {
   const checkboxRef = useRef<HTMLInputElement | null>(null);
 
   return (
@@ -31,6 +38,7 @@ export const CustomCheckbox: FC<CustomCheckboxProps> = ({ name, value, onChange,
         </div>
         <span className="italic text-base md:text-lg">{labelText}</span>
       </div>
+      {error && <span className="text-red-500 text-sm">{error}</span>}
     </>
   );
 };

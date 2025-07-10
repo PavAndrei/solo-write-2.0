@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { useForm, Controller, FieldErrors } from 'react-hook-form';
 import { AnimationProvider } from '../components/AnimationProvider';
 import { Container } from '../components/Container';
 import { TextField } from '../components/TextField';
@@ -8,18 +8,12 @@ import { Button } from '../components/Button';
 import { FileUploadInput } from '../components/FileUploadInput';
 import { useNavigate } from 'react-router-dom';
 import { signIn, signUp } from '../api/apiAuth';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SignInSchema, SignUpSchema } from '../utils/authSchemas';
+import type { FormData, SignInData, SignUpData } from '../utils/authSchemas';
 
 interface AuthProps {
   type: 'sign-in' | 'sign-up';
-}
-
-interface AuthFormInputs {
-  username?: string;
-  email: string;
-  password: string;
-  repeatPassword?: string;
-  terms?: boolean;
-  file?: FileList;
 }
 
 export const Auth: FC<AuthProps> = ({ type }) => {
@@ -31,51 +25,51 @@ export const Auth: FC<AuthProps> = ({ type }) => {
     handleSubmit,
     control,
     reset,
-    watch,
-    setValue,
     formState: { errors },
-  } = useForm<AuthFormInputs>();
-
-  const fileList = watch('file');
+  } = useForm<FormData>({
+    resolver: zodResolver(type === 'sign-up' ? SignUpSchema : SignInSchema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+    shouldUnregister: true,
+  });
 
   useEffect(() => {
     reset();
   }, [type, reset]);
 
-  const onSubmit: SubmitHandler<AuthFormInputs> = async (data) => {
+  const onSubmit = async (data: FormData) => {
     if (type === 'sign-up') {
-      if (data.password !== data.repeatPassword) {
-        alert('Passwords do not match');
-        return;
-      }
-      if (!data.terms) {
-        alert('You must agree to the terms');
-        return;
-      }
-
+      const signUpData = data as SignUpData;
       const formData = new FormData();
-      formData.append('username', data.username!);
-      formData.append('email', data.email);
-      formData.append('password', data.password);
-      if (data.file?.[0]) {
-        formData.append('image', data.file[0]);
+
+      formData.append('username', signUpData.username);
+      formData.append('email', signUpData.email);
+      formData.append('password', signUpData.password);
+      if (signUpData.file?.[0]) {
+        formData.append('image', signUpData.file[0]);
       }
 
       const response = await signUp(formData);
       if (response.success) navigate('/');
-    }
-
-    if (type === 'sign-in') {
+    } else {
+      const signInData = data as SignInData;
       const response = await signIn({
-        email: data.email,
-        password: data.password,
+        email: signInData.email,
+        password: signInData.password,
       });
       if (response.success) navigate('/');
     }
   };
 
-  const handleFileRemove = () => {
-    setValue('file', undefined); // сбросить файл
+  const getError = (field: keyof SignUpData | keyof SignInData): string | undefined => {
+    if (type === 'sign-up') {
+      return (errors as FieldErrors<SignUpData>)[field as keyof SignUpData]?.message as
+        | string
+        | undefined;
+    }
+    return (errors as FieldErrors<SignInData>)[field as keyof SignInData]?.message as
+      | string
+      | undefined;
   };
 
   return (
@@ -92,67 +86,64 @@ export const Auth: FC<AuthProps> = ({ type }) => {
                   <TextField
                     labelText="Username"
                     placeholder="John Doe"
-                    {...register('username', { required: 'Username is required' })}
-                    error={errors.username?.message}
+                    {...register('username')}
+                    error={getError('username')}
                   />
                 )}
 
                 <TextField
                   labelText="Email"
                   placeholder="john.doe@gmail.com"
-                  {...register('email', { required: 'Email is required' })}
-                  error={errors.email?.message}
+                  {...register('email')}
+                  error={getError('email')}
                 />
 
                 <TextField
                   labelText="Password"
                   placeholder="********"
                   type="password"
-                  {...register('password', { required: 'Password is required' })}
-                  error={errors.password?.message}
+                  {...register('password')}
+                  error={getError('password')}
                 />
 
                 {type === 'sign-up' && (
-                  <TextField
-                    labelText="Repeat Password"
-                    placeholder="********"
-                    type="password"
-                    {...register('repeatPassword', {
-                      required: 'Repeat your password',
-                    })}
-                    error={errors.repeatPassword?.message}
-                  />
-                )}
+                  <>
+                    <TextField
+                      labelText="Repeat Password"
+                      placeholder="********"
+                      type="password"
+                      {...register('repeatPassword')}
+                      error={getError('repeatPassword')}
+                    />
 
-                {type === 'sign-up' && (
-                  <Controller
-                    name="file"
-                    control={control}
-                    render={({ field }) => (
-                      <FileUploadInput
-                        name={field.name}
-                        value={field.value}
-                        onChange={field.onChange}
-                        removeFunction={handleFileRemove}
-                      />
-                    )}
-                  />
-                )}
+                    <Controller
+                      name="file"
+                      control={control}
+                      render={({ field }) => (
+                        <FileUploadInput
+                          name={field.name}
+                          value={field.value}
+                          onChange={field.onChange}
+                          error={getError('file')}
+                        />
+                      )}
+                    />
 
-                {type === 'sign-up' && (
-                  <Controller
-                    name="terms"
-                    control={control}
-                    defaultValue={false}
-                    render={({ field }) => (
-                      <CustomCheckbox
-                        name={field.name}
-                        value={field.value}
-                        onChange={field.onChange}
-                        labelText="Do you agree with the terms?"
-                      />
-                    )}
-                  />
+                    <Controller
+                      name="terms"
+                      control={control}
+                      defaultValue={false}
+                      render={({ field }) => (
+                        <CustomCheckbox
+                          name={field.name}
+                          value={field.value}
+                          onChange={field.onChange}
+                          labelText="Do you agree with the terms?"
+                          error={getError('terms')}
+                        />
+                      )}
+                    />
+                  </>
                 )}
 
                 <Button type="submit" center size="lg" className="capitalize">

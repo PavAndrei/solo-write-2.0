@@ -1,20 +1,16 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import { AnimationProvider } from './AnimationProvider';
 import { TiDelete } from 'react-icons/ti';
+import { FieldError, FieldErrorsImpl, Merge } from 'react-hook-form';
 
 interface FileUploadInputProps {
   name: string;
   value?: FileList;
   onChange: (value: FileList | undefined) => void;
-  removeFunction: () => void;
+  error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
 }
 
-export const FileUploadInput: FC<FileUploadInputProps> = ({
-  name,
-  value,
-  onChange,
-  removeFunction,
-}) => {
+export const FileUploadInput: FC<FileUploadInputProps> = ({ name, value, onChange, error }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [preview, setPreview] = useState<string>('');
 
@@ -59,6 +55,7 @@ export const FileUploadInput: FC<FileUploadInputProps> = ({
               src={preview || 'https://placehold.co/120/E5E7EB/4B5563?text=Avatar'}
               alt=""
             />
+
             {value?.[0] && preview && (
               <TiDelete
                 className="absolute top-4 right-[30%] cursor-pointer text-5xl transition-colors duration-300 hover:text-rose-900 ease-in-out"
@@ -70,6 +67,7 @@ export const FileUploadInput: FC<FileUploadInputProps> = ({
             )}
           </AnimationProvider>
         </div>
+        {error && <span className="text-red-500 text-sm text-center">{error.toString()}</span>}
       </div>
     </>
   );
