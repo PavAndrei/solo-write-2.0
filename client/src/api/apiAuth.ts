@@ -1,9 +1,16 @@
 import { SignInData } from '../utils/authSchemas';
 
-type ApiResponse = {
+type UserData = {
+  userId: string;
+  email: string;
+  role: string;
+  verified: boolean;
+};
+
+export type ApiResponse = {
   success: boolean;
   message?: string;
-  statusCode?: number;
+  user?: UserData;
 };
 
 export const signUp = async (formData: FormData): Promise<ApiResponse> => {
@@ -33,6 +40,7 @@ export const signIn = async (
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData),
+      credentials: 'include',
     });
 
     const data = await response.json();
@@ -41,6 +49,35 @@ export const signIn = async (
     return {
       success: false,
       message: err instanceof Error ? err.message : 'Unknown error',
+    };
+  }
+};
+
+export const checkAuth = async (): Promise<ApiResponse> => {
+  try {
+    const response = await fetch('http://localhost:5000/api/auth/me', {
+      credentials: 'include', // Важно для кук!
+    });
+    return await response.json();
+  } catch (err) {
+    return {
+      success: false,
+      message: err instanceof Error ? err.message : 'Auth check failed',
+    };
+  }
+};
+
+export const logout = async (): Promise<ApiResponse> => {
+  try {
+    const response = await fetch('http://localhost:5000/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    return await response.json();
+  } catch (err) {
+    return {
+      success: false,
+      message: err instanceof Error ? err.message : 'Logout failed',
     };
   }
 };

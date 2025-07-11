@@ -7,16 +7,19 @@ import { CustomCheckbox } from '../components/CustomCheckbox';
 import { Button } from '../components/Button';
 import { FileUploadInput } from '../components/FileUploadInput';
 import { useNavigate } from 'react-router-dom';
-import { signIn, signUp } from '../api/apiAuth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SignInSchema, SignUpSchema } from '../utils/authSchemas';
 import type { FormData, SignInData, SignUpData } from '../utils/authSchemas';
+import { useAppDispatch } from '../redux/store';
+import { loginUser, registerUser } from '../redux/auth/slice';
 
 interface AuthProps {
   type: 'sign-in' | 'sign-up';
 }
 
 export const Auth: FC<AuthProps> = ({ type }) => {
+  const dispatch = useAppDispatch();
+
   const title = type === 'sign-up' ? 'Join Us Here' : 'Welcome Back';
   const navigate = useNavigate();
 
@@ -49,15 +52,24 @@ export const Auth: FC<AuthProps> = ({ type }) => {
         formData.append('image', signUpData.file[0]);
       }
 
-      const response = await signUp(formData);
-      if (response.success) navigate('/');
+      try {
+        await dispatch(registerUser(formData)).unwrap();
+        navigate('/profile');
+      } catch (err) {
+        console.error('Registration failed:', err);
+      }
     } else {
-      const signInData = data as SignInData;
-      const response = await signIn({
-        email: signInData.email,
-        password: signInData.password,
-      });
-      if (response.success) navigate('/');
+      try {
+        await dispatch(
+          loginUser({
+            email: data.email,
+            password: data.password,
+          })
+        ).unwrap();
+        navigate('/profile');
+      } catch (err) {
+        console.error('Login failed:', err);
+      }
     }
   };
 

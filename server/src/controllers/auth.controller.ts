@@ -6,6 +6,52 @@ import User from '../models/User.model';
 import { errorHandler } from '../middlewares/handleErrors';
 import { SigninInput } from '../utils/validations/auth.schemas';
 import { ImageRequest } from '../middlewares/uploadImages';
+import { RequestWithId } from '../middlewares/checkAuth';
+
+// export const signup = async (
+//   req: ImageRequest,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   const { username, email, password } = req.body;
+
+//   try {
+//     const existingUser = await User.findOne({
+//       $or: [{ email }, { username }],
+//     });
+
+//     if (existingUser) {
+//       throw errorHandler(
+//         400,
+//         existingUser.email === email
+//           ? 'Email already in use'
+//           : 'Username already taken'
+//       );
+//     }
+
+//     const hashedPassword = await hash(password, 12);
+
+//     const newUser = new User({
+//       username,
+//       email,
+//       password: hashedPassword,
+//       avatarUrl: req.imageUrl || null,
+//     });
+
+//     const result = await newUser.save();
+
+//     const { password: removedPassword, ...userWithoutPassword } =
+//       result.toObject();
+
+//     res.status(201).json({
+//       success: true,
+//       message: 'Your account has been created successfully',
+//       user: userWithoutPassword,
+//     });
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 
 export const signup = async (
   req: ImageRequest,
@@ -15,6 +61,7 @@ export const signup = async (
   const { username, email, password } = req.body;
 
   try {
+    // Проверка на существующего пользователя
     const existingUser = await User.findOne({
       $or: [{ email }, { username }],
     });
@@ -28,8 +75,10 @@ export const signup = async (
       );
     }
 
+    // Хеширование пароля
     const hashedPassword = await hash(password, 12);
 
+    // Создание пользователя
     const newUser = new User({
       username,
       email,
@@ -37,16 +86,40 @@ export const signup = async (
       avatarUrl: req.imageUrl || null,
     });
 
-    const result = await newUser.save();
+    const savedUser = await newUser.save();
 
-    const { password: removedPassword, ...userWithoutPassword } =
-      result.toObject();
+    // Генерация токена (как в signin)
+    const token = jwt.sign(
+      {
+        userId: savedUser._id,
+        email: savedUser.email,
+        verified: savedUser.verified,
+        role: savedUser.role,
+      },
+      process.env.TOKEN_SECRET as Secret,
+      { expiresIn: '8h' }
+    );
 
-    res.status(201).json({
-      success: true,
-      message: 'Your account has been created successfully',
-      user: userWithoutPassword,
-    });
+    // Установка куки и возврат данных пользователя
+    return res
+      .status(201)
+      .cookie('access_token', token, {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production', // HTTPS в продакшене
+      })
+      .json({
+        success: true,
+        user: {
+          userId: savedUser._id,
+          email: savedUser.email,
+          role: savedUser.role,
+          verified: savedUser.verified,
+          username: savedUser.username,
+          avatarUrl: savedUser.avatarUrl,
+        },
+        message: 'Account created and logged in successfully',
+      });
   } catch (err) {
     next(err);
   }
@@ -89,7 +162,51 @@ export const signin = async (
         httpOnly: true,
         sameSite: 'lax',
       })
-      .json({ success: true, message: 'Log in successfully' });
+      .json({
+        success: true,
+        user: {
+          userId: existingUser._id,
+          email: existingUser.email,
+          role: existingUser.role,
+          verified: existingUser.verified,
+        },
+        message: 'Log in successfully',
+      });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getMe = async (
+  req: RequestWithId,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // Проверка аутентификации через middleware (например, authMiddleware)
+    if (!req.userId) {
+      throw errorHandler(401, 'Not authenticated');
+    }
+
+    // Поиск пользователя в БД
+    const user = await User.findById(req.userId).select('-password');
+
+    if (!user) {
+      throw errorHandler(404, 'User not found');
+    }
+
+    // Возврат данных пользователя
+    res.status(200).json({
+      success: true,
+      user: {
+        userId: user._id,
+        email: user.email,
+        role: user.role,
+        verified: user.verified,
+        username: user.username,
+        avatarUrl: user.avatarUrl,
+      },
+    });
   } catch (err) {
     next(err);
   }
