@@ -161,6 +161,7 @@ export const signin = async (
       .cookie('access_token', token, {
         httpOnly: true,
         sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
       })
       .json({
         success: true,
