@@ -1,6 +1,6 @@
 // src/store/authSlice.ts
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { checkAuth, signIn, signUp } from '../../api/apiAuth';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { checkAuth, signIn, signUp, signout } from '../../api/apiAuth';
 import { SignInData } from '../../utils/authSchemas';
 
 interface UserData {
@@ -59,6 +59,14 @@ export const checkUserSession = createAsyncThunk<UserData | null, void>(
   }
 );
 
+export const signoutUser = createAsyncThunk('auth/signout', async (_, { rejectWithValue }) => {
+  const response = await signout();
+  if (!response.success) {
+    return rejectWithValue(response.message);
+  }
+  return null; // Очищаем пользователя
+});
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -109,6 +117,13 @@ const authSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
         state.user = null;
+      })
+      .addCase(signoutUser.fulfilled, (state) => {
+        state.user = null;
+        state.error = null;
+      })
+      .addCase(signoutUser.rejected, (state, action) => {
+        state.error = action.payload as string;
       });
   },
 });

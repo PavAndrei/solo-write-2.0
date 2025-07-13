@@ -11,6 +11,7 @@ import { useAppDispatch } from './redux/store';
 import { checkUserSession } from './redux/auth/slice';
 import { useEffect } from 'react';
 import { Profile } from './pages/Profile';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -26,9 +27,11 @@ function App() {
         <Main>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="signin" element={<Auth type="sign-in" />} />
-            <Route path="signup" element={<Auth type="sign-up" />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+            <Route path="/signin" element={<Auth type="sign-in" />} />
+            <Route path="/signup" element={<Auth type="sign-up" />} />
           </Routes>
         </Main>
         <Footer />

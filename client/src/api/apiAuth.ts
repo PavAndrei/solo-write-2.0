@@ -56,7 +56,7 @@ export const signIn = async (
 export const checkAuth = async (): Promise<ApiResponse> => {
   try {
     const response = await fetch('http://localhost:5000/api/auth/me', {
-      credentials: 'include', // Важно для кук!
+      credentials: 'include',
     });
     return await response.json();
   } catch (err) {
@@ -67,9 +67,9 @@ export const checkAuth = async (): Promise<ApiResponse> => {
   }
 };
 
-export const logout = async (): Promise<ApiResponse> => {
+export const signout = async (): Promise<ApiResponse> => {
   try {
-    const response = await fetch('http://localhost:5000/api/auth/logout', {
+    const response = await fetch('http://localhost:5000/api/auth/signout', {
       method: 'POST',
       credentials: 'include',
     });

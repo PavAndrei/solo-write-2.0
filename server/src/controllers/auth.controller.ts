@@ -183,19 +183,16 @@ export const getMe = async (
   next: NextFunction
 ) => {
   try {
-    // Проверка аутентификации через middleware (например, authMiddleware)
     if (!req.userId) {
       throw errorHandler(401, 'Not authenticated');
     }
 
-    // Поиск пользователя в БД
     const user = await User.findById(req.userId).select('-password');
 
     if (!user) {
       throw errorHandler(404, 'User not found');
     }
 
-    // Возврат данных пользователя
     res.status(200).json({
       success: true,
       user: {
@@ -209,5 +206,16 @@ export const getMe = async (
     });
   } catch (err) {
     next(err);
+  }
+};
+
+export const signout = (req: Request, res: Response) => {
+  try {
+    res
+      .clearCookie('access_token')
+      .status(200)
+      .json({ success: true, message: 'Logged out successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Logout failed' });
   }
 };

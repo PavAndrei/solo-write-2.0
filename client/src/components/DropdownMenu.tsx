@@ -1,6 +1,10 @@
 import { IoClose } from 'react-icons/io5';
 import clsx from 'clsx';
 import { FC } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { Button } from './Button';
+import { logout, signoutUser } from '../redux/auth/slice';
 
 interface DropdownMenu {
   visibility: boolean;
@@ -8,6 +12,22 @@ interface DropdownMenu {
 }
 
 export const DropdownMenu: FC<DropdownMenu> = ({ visibility, closeDropdown }) => {
+  const navigate = useNavigate();
+
+  const isAuthorized = useAppSelector((state) => state.auth.user);
+  const dispatch = useAppDispatch();
+
+  const handleSignout = async () => {
+    try {
+      await dispatch(signoutUser()).unwrap();
+      navigate('/signin');
+    } catch (err) {
+      console.error('Signout failed:', err);
+      dispatch(logout());
+      navigate('/signin');
+    }
+  };
+
   return (
     <div
       className={clsx(
@@ -17,8 +37,35 @@ export const DropdownMenu: FC<DropdownMenu> = ({ visibility, closeDropdown }) =>
     >
       <IoClose onClick={closeDropdown} className="self-end text-2xl sm:text-3xl mr-2" />
       <ul className="flex flex-col gap-2.5">
-        <li className="border-b border-b-gray-400 pb-2.5">Sign In</li>
-        <li className="border-b border-b-gray-400 pb-2.5">Sign Up</li>
+        {isAuthorized ? (
+          <button
+            onClick={() => {
+              handleSignout();
+              closeDropdown();
+            }}
+            className="border-b border-b-gray-400 pb-2.5 bg-inherit"
+          >
+            Sign Out
+          </button>
+        ) : (
+          <>
+            <Link
+              to="/signin"
+              onClick={closeDropdown}
+              className="border-b border-b-gray-400 pb-2.5"
+            >
+              Sign In
+            </Link>
+            <Link
+              to="/signup"
+              onClick={closeDropdown}
+              className="border-b border-b-gray-400 pb-2.5"
+            >
+              Sign Up
+            </Link>
+          </>
+        )}
+
         <li className="border-b border-b-gray-400 pb-2.5">Write An Article</li>
         <li className="pb-2.5">Catalogue</li>
       </ul>
