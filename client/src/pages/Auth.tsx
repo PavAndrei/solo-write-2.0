@@ -6,7 +6,7 @@ import { TextField } from '../components/TextField';
 import { CustomCheckbox } from '../components/CustomCheckbox';
 import { Button } from '../components/Button';
 import { FileUploadInput } from '../components/FileUploadInput';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SignInSchema, SignUpSchema } from '../utils/authSchemas';
 import type { FormData, SignInData, SignUpData } from '../utils/authSchemas';
@@ -20,7 +20,7 @@ interface AuthProps {
 export const Auth: FC<AuthProps> = ({ type }) => {
   const dispatch = useAppDispatch();
 
-  const title = type === 'sign-up' ? 'Join Us Here' : 'Welcome Back';
+  const title = type === 'sign-up' ? 'Join Us Now' : 'Welcome Back';
   const navigate = useNavigate();
 
   const {
@@ -161,6 +161,22 @@ export const Auth: FC<AuthProps> = ({ type }) => {
                 <Button type="submit" center size="lg" className="capitalize">
                   {type.replace('-', ' ')}
                 </Button>
+
+                {type === 'sign-up' ? (
+                  <div className="text-center text-sm italic text-gray-500">
+                    <p>Already have an account?</p>
+                    <Link className="underline" to="/signin">
+                      Sign In Here!
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="text-center text-sm italic text-gray-500">
+                    <p>Do not have an account?</p>
+                    <Link className="underline" to="/signup">
+                      Sign Up Here!
+                    </Link>
+                  </div>
+                )}
               </div>
             </form>
           </div>

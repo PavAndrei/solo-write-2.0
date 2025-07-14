@@ -7,19 +7,10 @@ import { Auth } from './pages/Auth';
 import { Footer } from './components/Footer';
 import { Main } from './components/Main';
 import { Layout } from './components/Layout';
-import { useAppDispatch } from './redux/store';
-import { checkUserSession } from './redux/auth/slice';
-import { useEffect } from 'react';
 import { Profile } from './pages/Profile';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(checkUserSession());
-  }, [dispatch]);
-
   return (
     <ThemeProvider>
       <Layout>
