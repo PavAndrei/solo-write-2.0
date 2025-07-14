@@ -9,6 +9,7 @@ import { Main } from './components/Main';
 import { Layout } from './components/Layout';
 import { Profile } from './pages/Profile';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { ToastProvider } from './components/ToastProvider';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Layout>
         <Header />
         <Main>
+          <ToastProvider />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route element={<ProtectedRoute />}>

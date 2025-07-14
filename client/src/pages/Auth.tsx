@@ -10,8 +10,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SignInSchema, SignUpSchema } from '../utils/authSchemas';
 import type { FormData, SignInData, SignUpData } from '../utils/authSchemas';
-import { useAppDispatch } from '../redux/store';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { FaSpinner } from 'react-icons/fa';
 import { loginUser, registerUser } from '../redux/auth/slice';
+import { addToast } from '../redux/toast/slice';
+import { AnimatePresence } from 'framer-motion';
 
 interface AuthProps {
   type: 'sign-in' | 'sign-up';
@@ -19,6 +22,7 @@ interface AuthProps {
 
 export const Auth: FC<AuthProps> = ({ type }) => {
   const dispatch = useAppDispatch();
+  const { isLoading } = useAppSelector((state) => state.auth);
 
   const title = type === 'sign-up' ? 'Join Us Now' : 'Welcome Back';
   const navigate = useNavigate();
@@ -68,6 +72,7 @@ export const Auth: FC<AuthProps> = ({ type }) => {
         ).unwrap();
         navigate('/profile');
       } catch (err) {
+        dispatch(addToast({ color: 'error', text: err }));
         console.error('Login failed:', err);
       }
     }
@@ -85,103 +90,111 @@ export const Auth: FC<AuthProps> = ({ type }) => {
   };
 
   return (
-    <AnimationProvider keyValue={type}>
-      <Container>
-        <section className="py-[60px] md:py-[100px] xl:py-[120px]">
-          <div className="flex flex-col mx-auto max-w-[80%] md:max-w-[450px]">
-            <h1 className="text-center text-3xl md:text-4xl lg:text-5xl font-bold mb-10">
-              {title}
-            </h1>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="flex flex-col gap-4">
-                {type === 'sign-up' && (
-                  <TextField
-                    labelText="Username"
-                    placeholder="John Doe"
-                    {...register('username')}
-                    error={getError('username')}
-                  />
-                )}
-
-                <TextField
-                  labelText="Email"
-                  placeholder="john.doe@gmail.com"
-                  {...register('email')}
-                  error={getError('email')}
-                />
-
-                <TextField
-                  labelText="Password"
-                  placeholder="********"
-                  type="password"
-                  {...register('password')}
-                  error={getError('password')}
-                />
-
-                {type === 'sign-up' && (
-                  <>
+    <AnimatePresence>
+      <AnimationProvider keyValue={type}>
+        <Container>
+          <section className="py-[60px] md:py-[100px] xl:py-[120px]">
+            <div className="flex flex-col mx-auto max-w-[80%] md:max-w-[450px]">
+              <h1 className="text-center text-3xl md:text-4xl lg:text-5xl font-bold mb-10">
+                {title}
+              </h1>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="flex flex-col gap-4">
+                  {type === 'sign-up' && (
                     <TextField
-                      labelText="Repeat Password"
-                      placeholder="********"
-                      type="password"
-                      {...register('repeatPassword')}
-                      error={getError('repeatPassword')}
+                      labelText="Username"
+                      placeholder="John Doe"
+                      {...register('username')}
+                      error={getError('username')}
                     />
+                  )}
 
-                    <Controller
-                      name="file"
-                      control={control}
-                      render={({ field }) => (
-                        <FileUploadInput
-                          name={field.name}
-                          value={field.value}
-                          onChange={field.onChange}
-                          error={getError('file')}
-                        />
-                      )}
-                    />
+                  <TextField
+                    labelText="Email"
+                    placeholder="john.doe@gmail.com"
+                    {...register('email')}
+                    error={getError('email')}
+                  />
 
-                    <Controller
-                      name="terms"
-                      control={control}
-                      defaultValue={false}
-                      render={({ field }) => (
-                        <CustomCheckbox
-                          name={field.name}
-                          value={field.value}
-                          onChange={field.onChange}
-                          labelText="Do you agree with the terms?"
-                          error={getError('terms')}
-                        />
-                      )}
-                    />
-                  </>
-                )}
+                  <TextField
+                    labelText="Password"
+                    placeholder="********"
+                    type="password"
+                    {...register('password')}
+                    error={getError('password')}
+                  />
 
-                <Button type="submit" center size="lg" className="capitalize">
-                  {type.replace('-', ' ')}
-                </Button>
+                  {type === 'sign-up' && (
+                    <>
+                      <TextField
+                        labelText="Repeat Password"
+                        placeholder="********"
+                        type="password"
+                        {...register('repeatPassword')}
+                        error={getError('repeatPassword')}
+                      />
 
-                {type === 'sign-up' ? (
-                  <div className="text-center text-sm italic text-gray-500">
-                    <p>Already have an account?</p>
-                    <Link className="underline" to="/signin">
-                      Sign In Here!
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="text-center text-sm italic text-gray-500">
-                    <p>Do not have an account?</p>
-                    <Link className="underline" to="/signup">
-                      Sign Up Here!
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </form>
-          </div>
-        </section>
-      </Container>
-    </AnimationProvider>
+                      <Controller
+                        name="file"
+                        control={control}
+                        render={({ field }) => (
+                          <FileUploadInput
+                            name={field.name}
+                            value={field.value}
+                            onChange={field.onChange}
+                            error={getError('file')}
+                          />
+                        )}
+                      />
+
+                      <Controller
+                        name="terms"
+                        control={control}
+                        defaultValue={false}
+                        render={({ field }) => (
+                          <CustomCheckbox
+                            name={field.name}
+                            value={field.value}
+                            onChange={field.onChange}
+                            labelText="Do you agree with the terms?"
+                            error={getError('terms')}
+                          />
+                        )}
+                      />
+                    </>
+                  )}
+
+                  <Button
+                    disabled={isLoading}
+                    type="submit"
+                    center
+                    size="lg"
+                    className="capitalize"
+                  >
+                    {isLoading ? <FaSpinner className="animate-spin" /> : type.replace('-', ' ')}
+                  </Button>
+
+                  {type === 'sign-up' ? (
+                    <div className="dark:text-gray-300 text-center text-sm italic text-gray-500">
+                      <p>Already have an account?</p>
+                      <Link className="underline" to="/signin">
+                        Sign In Here!
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="dark:text-gray-300 text-center text-sm italic text-gray-500">
+                      <p>Do not have an account?</p>
+                      <Link className="underline" to="/signup">
+                        Sign Up Here!
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </form>
+            </div>
+          </section>
+        </Container>
+      </AnimationProvider>
+    </AnimatePresence>
   );
 };

@@ -27,7 +27,7 @@ export const TextField = forwardRef<
         ref={ref}
         name={name}
         type={isPassword ? inputType : type}
-        className="bg-gray-200 outline-0 border rounded-md h-9 pl-8 text-sm md:text-base placeholder:text-sm md:placeholder:text-base focus:border-gray-500 border-gray-400 focus:border-2 transition-all duration-300 ease-in-out text-gray-900 placeholder:text-gray-500"
+        className="bg-gray-200 outline-0 border rounded-md h-9 pl-8 text-sm md:text-base placeholder:text-sm md:placeholder:text-base focus:border-gray-500 border-gray-400 focus:border-2 transition-all duration-300 ease-in-out text-gray-900 placeholder:text-gray-500 z-0"
         placeholder={placeholder}
         autoComplete={name}
         {...rest}

@@ -9,6 +9,7 @@ interface ButtonProps {
   variant?: 'dark' | 'light';
   center?: boolean;
   type?: 'submit' | 'button' | 'reset';
+  disabled?: boolean;
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -19,9 +20,11 @@ export const Button: FC<ButtonProps> = ({
   variant = 'light',
   center,
   type = 'button',
+  disabled = false,
 }) => {
   return (
     <button
+      disabled={disabled}
       type={type}
       onClick={onClickFunc}
       className={clsx(
