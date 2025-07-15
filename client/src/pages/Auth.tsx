@@ -44,6 +44,8 @@ export const Auth: FC<AuthProps> = ({ type }) => {
     reset();
   }, [type, reset]);
 
+  console.log(Object.keys(errors));
+
   const onSubmit = async (data: FormData) => {
     if (type === 'sign-up') {
       const signUpData = data as SignUpData;
@@ -60,6 +62,7 @@ export const Auth: FC<AuthProps> = ({ type }) => {
         await dispatch(registerUser(formData)).unwrap();
         navigate('/profile');
       } catch (err) {
+        dispatch(addToast({ color: 'error', text: err }));
         console.error('Registration failed:', err);
       }
     } else {
@@ -165,7 +168,7 @@ export const Auth: FC<AuthProps> = ({ type }) => {
                   )}
 
                   <Button
-                    disabled={isLoading}
+                    disabled={isLoading || Object.keys(errors).length > 0}
                     type="submit"
                     center
                     size="lg"

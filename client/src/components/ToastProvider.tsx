@@ -7,7 +7,7 @@ export const ToastProvider = () => {
   const { toastList } = useAppSelector((state) => state.toast);
 
   return (
-    <div className="flex flex-col gap-2.5 absolute top-1 right-2.5 z-50">
+    <div className="flex flex-col gap-2.5 fixed w-[200px] top-0 right-0 z-50">
       <AnimatePresence>
         {toastList.map((toastItem) => (
           <AnimationProvider

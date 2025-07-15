@@ -28,7 +28,7 @@ export const Button: FC<ButtonProps> = ({
       type={type}
       onClick={onClickFunc}
       className={clsx(
-        'flex gap-1 items-center text-center justify-center rounded-xl cursor-pointer border-1 text-sm md:text-base lg:text-lg font-medium transition-all duration-300 ease-in-out hover:scale-95 active:scale-90',
+        'flex gap-1 items-center text-center justify-center rounded-xl cursor-pointer border-1 text-sm md:text-base lg:text-lg font-medium transition-all duration-300 ease-in-out hover:scale-95 active:scale-90 disabled:scale-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-300 dark:disabled:bg-gray-700',
         size === 'sm' && 'py-1.5 px-2.5',
         size === 'lg' && 'py-3.5 px-12 font-semibold',
         variant === 'dark' &&
