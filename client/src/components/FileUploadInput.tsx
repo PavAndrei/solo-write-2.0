@@ -8,9 +8,18 @@ interface FileUploadInputProps {
   value?: FileList;
   onChange: (value: FileList | undefined) => void;
   error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
+  placehold?: string;
+  labelText: string;
 }
 
-export const FileUploadInput: FC<FileUploadInputProps> = ({ name, value, onChange, error }) => {
+export const FileUploadInput: FC<FileUploadInputProps> = ({
+  name,
+  value,
+  onChange,
+  error,
+  placehold,
+  labelText,
+}) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [preview, setPreview] = useState<string>('');
 
@@ -43,7 +52,7 @@ export const FileUploadInput: FC<FileUploadInputProps> = ({ name, value, onChang
           onClick={() => fileInputRef.current?.click()}
           className="italic text-base md:text-lg cursor-pointer font-medium"
         >
-          {'Choose Your Photo (optional)'}
+          {labelText}
         </span>
         <div
           className="bg-gray-200 rounded-full h-30 w-30 self-center cursor-pointer"
@@ -52,7 +61,7 @@ export const FileUploadInput: FC<FileUploadInputProps> = ({ name, value, onChang
           <AnimationProvider keyValue={preview}>
             <img
               className="object-cover h-30 w-30 rounded-full border-2 border-dashed border-gray-400"
-              src={preview || 'https://placehold.co/120/E5E7EB/4B5563?text=Avatar'}
+              src={preview || `https://placehold.co/120/E5E7EB/4B5563?text=${placehold}`}
               alt=""
             />
 

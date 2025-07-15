@@ -1,5 +1,5 @@
 import { forwardRef, useState } from 'react';
-import { FaUser, FaKey } from 'react-icons/fa';
+import { FaUser, FaKey, FaHeading } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { IoEye, IoEyeOff } from 'react-icons/io5';
 
@@ -35,6 +35,7 @@ export const TextField = forwardRef<
 
       {name === 'username' && <FaUser className="absolute top-10 md:top-11 left-2 text-gray-900" />}
       {name === 'email' && <MdEmail className="absolute top-10 md:top-11 left-2 text-gray-900" />}
+      {name === 'title' && <FaHeading className="absolute top-10 md:top-11 left-2 text-gray-900" />}
       {isPassword && <FaKey className="absolute top-10 md:top-11 left-2 text-gray-900" />}
 
       {isPassword && (

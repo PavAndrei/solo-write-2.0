@@ -10,6 +10,7 @@ import { Layout } from './components/Layout';
 import { Profile } from './pages/Profile';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ToastProvider } from './components/ToastProvider';
+import { Editor } from './pages/Editor';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             </Route>
             <Route path="/signin" element={<Auth type="sign-in" />} />
             <Route path="/signup" element={<Auth type="sign-up" />} />
+            <Route path="/editor" element={<Editor />} />
           </Routes>
         </Main>
         <Footer />

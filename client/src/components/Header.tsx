@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IoLogInOutline } from 'react-icons/io5';
-import { FaUserPlus } from 'react-icons/fa';
+import { FaUserPlus, FaPenAlt } from 'react-icons/fa';
 import { GiHamburgerMenu } from 'react-icons/gi';
 
 import { Container } from './Container';
@@ -53,6 +53,12 @@ export const Header = () => {
             </Button>
           ) : (
             <div className="items-center gap-2.5 order-4 hidden md:flex">
+              <Link to="/editor">
+                <Button variant={pathname === '/editor' ? 'dark' : 'light'}>
+                  <FaPenAlt /> Publish
+                </Button>
+              </Link>
+
               <Link to="/signin">
                 <Button variant={pathname === '/signin' ? 'dark' : 'light'}>
                   <IoLogInOutline /> Sign In

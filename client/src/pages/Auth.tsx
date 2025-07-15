@@ -15,6 +15,7 @@ import { FaSpinner } from 'react-icons/fa';
 import { loginUser, registerUser } from '../redux/auth/slice';
 import { addToast } from '../redux/toast/slice';
 import { AnimatePresence } from 'framer-motion';
+import { PageTitle } from '../components/PageTitle';
 
 interface AuthProps {
   type: 'sign-in' | 'sign-up';
@@ -98,101 +99,99 @@ export const Auth: FC<AuthProps> = ({ type }) => {
         <Container>
           <section className="py-[60px] md:py-[100px] xl:py-[120px]">
             <div className="flex flex-col mx-auto max-w-[80%] md:max-w-[450px]">
-              <h1 className="text-center text-3xl md:text-4xl lg:text-5xl font-bold mb-10">
-                {title}
-              </h1>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex flex-col gap-4">
-                  {type === 'sign-up' && (
+              <PageTitle>{title}</PageTitle>
+              <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+                {type === 'sign-up' && (
+                  <TextField
+                    labelText="Username"
+                    placeholder="John Doe"
+                    {...register('username')}
+                    error={getError('username')}
+                  />
+                )}
+
+                <TextField
+                  labelText="Email"
+                  placeholder="john.doe@gmail.com"
+                  {...register('email')}
+                  error={getError('email')}
+                />
+
+                <TextField
+                  labelText="Password"
+                  placeholder="********"
+                  type="password"
+                  {...register('password')}
+                  error={getError('password')}
+                />
+
+                {type === 'sign-up' && (
+                  <>
                     <TextField
-                      labelText="Username"
-                      placeholder="John Doe"
-                      {...register('username')}
-                      error={getError('username')}
+                      labelText="Repeat Password"
+                      placeholder="********"
+                      type="password"
+                      {...register('repeatPassword')}
+                      error={getError('repeatPassword')}
                     />
-                  )}
 
-                  <TextField
-                    labelText="Email"
-                    placeholder="john.doe@gmail.com"
-                    {...register('email')}
-                    error={getError('email')}
-                  />
+                    <Controller
+                      name="file"
+                      control={control}
+                      render={({ field }) => (
+                        <FileUploadInput
+                          name={field.name}
+                          value={field.value}
+                          onChange={field.onChange}
+                          error={getError('file')}
+                          placehold="Avatar"
+                          labelText="Choose your photo (optional)"
+                        />
+                      )}
+                    />
 
-                  <TextField
-                    labelText="Password"
-                    placeholder="********"
-                    type="password"
-                    {...register('password')}
-                    error={getError('password')}
-                  />
+                    <Controller
+                      name="terms"
+                      control={control}
+                      defaultValue={false}
+                      render={({ field }) => (
+                        <CustomCheckbox
+                          name={field.name}
+                          value={field.value}
+                          onChange={field.onChange}
+                          labelText="Do you agree with the terms?"
+                          error={getError('terms')}
+                        />
+                      )}
+                    />
+                  </>
+                )}
 
-                  {type === 'sign-up' && (
-                    <>
-                      <TextField
-                        labelText="Repeat Password"
-                        placeholder="********"
-                        type="password"
-                        {...register('repeatPassword')}
-                        error={getError('repeatPassword')}
-                      />
+                <Button
+                  disabled={isLoading || Object.keys(errors).length > 0}
+                  type="submit"
+                  center
+                  size="lg"
+                  className="capitalize"
+                >
+                  {isLoading ? <FaSpinner className="animate-spin" /> : type.replace('-', ' ')}
+                </Button>
 
-                      <Controller
-                        name="file"
-                        control={control}
-                        render={({ field }) => (
-                          <FileUploadInput
-                            name={field.name}
-                            value={field.value}
-                            onChange={field.onChange}
-                            error={getError('file')}
-                          />
-                        )}
-                      />
-
-                      <Controller
-                        name="terms"
-                        control={control}
-                        defaultValue={false}
-                        render={({ field }) => (
-                          <CustomCheckbox
-                            name={field.name}
-                            value={field.value}
-                            onChange={field.onChange}
-                            labelText="Do you agree with the terms?"
-                            error={getError('terms')}
-                          />
-                        )}
-                      />
-                    </>
-                  )}
-
-                  <Button
-                    disabled={isLoading || Object.keys(errors).length > 0}
-                    type="submit"
-                    center
-                    size="lg"
-                    className="capitalize"
-                  >
-                    {isLoading ? <FaSpinner className="animate-spin" /> : type.replace('-', ' ')}
-                  </Button>
-
-                  {type === 'sign-up' ? (
-                    <div className="dark:text-gray-300 text-center text-sm italic text-gray-500">
-                      <p>Already have an account?</p>
-                      <Link className="underline" to="/signin">
-                        Sign In Here!
-                      </Link>
-                    </div>
-                  ) : (
-                    <div className="dark:text-gray-300 text-center text-sm italic text-gray-500">
-                      <p>Do not have an account?</p>
-                      <Link className="underline" to="/signup">
-                        Sign Up Here!
-                      </Link>
-                    </div>
-                  )}
-                </div>
+                {type === 'sign-up' ? (
+                  <div className="dark:text-gray-300 text-center text-sm italic text-gray-500">
+                    <p>Already have an account?</p>
+                    <Link className="underline" to="/signin">
+                      Sign In Here!
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="dark:text-gray-300 text-center text-sm italic text-gray-500">
+                    <p>Do not have an account?</p>
+                    <Link className="underline" to="/signup">
+                      Sign Up Here!
+                    </Link>
+                  </div>
+                )}
               </form>
             </div>
           </section>

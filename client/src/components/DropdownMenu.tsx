@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import { FC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../redux/store';
-import { Button } from './Button';
 import { logout, signoutUser } from '../redux/auth/slice';
 
 interface DropdownMenu {
@@ -31,7 +30,7 @@ export const DropdownMenu: FC<DropdownMenu> = ({ visibility, closeDropdown }) =>
   return (
     <div
       className={clsx(
-        'absolute flex flex-col top-0 right-0 bg-gray-300 dark:bg-gray-800 p-2.5 text-base sm:text-lg w-1/2 text-center rounded-bl-2xl transition-transform duration-300 ease-in-out',
+        'absolute z-50 flex flex-col top-0 right-0 bg-gray-300 dark:bg-gray-800 p-2.5 text-base sm:text-lg w-1/2 text-center rounded-bl-2xl transition-transform duration-300 ease-in-out',
         visibility ? 'translate-y-0' : 'translate-y-[-200%]'
       )}
     >
@@ -66,7 +65,9 @@ export const DropdownMenu: FC<DropdownMenu> = ({ visibility, closeDropdown }) =>
           </>
         )}
 
-        <li className="border-b border-b-gray-400 pb-2.5">Write An Article</li>
+        <Link to="/editor" onClick={closeDropdown} className="border-b border-b-gray-400 pb-2.5">
+          Write An Article
+        </Link>
         <li className="pb-2.5">Catalogue</li>
       </ul>
     </div>
