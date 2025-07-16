@@ -4,11 +4,11 @@ import { Container } from '../components/Container';
 import { PageTitle } from '../components/PageTitle';
 import { TextField } from '../components/TextField';
 import { useForm, Controller } from 'react-hook-form';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { useEffect } from 'react';
 import { MultipleImagesUploadField } from '../components/MultiplyImagesUploadField';
 import { CustomSelect } from '../components/CustomSelect';
+import { Button } from '../components/Button';
+import { MdSend } from 'react-icons/md';
+import { TipTap } from '../components/TipTap';
 
 interface EditorValues {
   title: string;
@@ -24,18 +24,8 @@ export const Editor = () => {
     register,
     handleSubmit,
     control,
-    setValue,
     formState: { errors },
   } = useForm<EditorValues>();
-
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: '',
-    onUpdate({ editor }) {
-      const html = editor.getHTML();
-      setValue('content', html);
-    },
-  });
 
   const onSubmit = (data: EditorValues) => {
     console.log('📝 Article submitted:', {
@@ -44,24 +34,15 @@ export const Editor = () => {
     });
   };
 
-  useEffect(() => {
-    return () => {
-      editor?.destroy();
-    };
-  }, [editor]);
-
   return (
     <AnimatePresence>
       <AnimationProvider>
         <Container>
           <section className="py-[60px] md:py-[100px] xl:py-[120px]">
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col w-full max-w-4xl mx-auto">
               <PageTitle>New Article</PageTitle>
 
-              <form
-                className="flex flex-col mx-auto gap-4 w-full"
-                onSubmit={handleSubmit(onSubmit)}
-              >
+              <form className="flex flex-col gap-6 w-full" onSubmit={handleSubmit(onSubmit)}>
                 <TextField
                   labelText="Title"
                   placeholder="Enter article title"
@@ -69,6 +50,7 @@ export const Editor = () => {
                   {...register('title', { required: 'Title is required' })}
                   error={errors.title?.message}
                 />
+
                 <Controller
                   name="category"
                   control={control}
@@ -117,21 +99,18 @@ export const Editor = () => {
                   name="content"
                   control={control}
                   defaultValue=""
-                  rules={{ required: 'Content is required' }}
-                  render={({ field }) => (
-                    <div className="border border-gray-300 rounded group">
-                      <EditorContent editor={editor} className="min-h-[200px] p-2 w-full h-full" />
-                    </div>
-                  )}
+                  render={({ field }) => <TipTap onChange={field.onChange} />}
                 />
-                {errors.content && <p className="text-red-500 text-sm">{errors.content.message}</p>}
 
-                <button
+                <Button
                   type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                  size="lg"
+                  variant="light"
+                  className="self-end mt-4 hover:scale-100 hover:translate-y-2 transition-transform duration-300 ease-in-out"
                 >
-                  Publish Article
-                </button>
+                  Publish an article
+                  <MdSend className="ml-2" />
+                </Button>
               </form>
             </div>
           </section>

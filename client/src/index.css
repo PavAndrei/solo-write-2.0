@@ -11,6 +11,14 @@ body,
 #root {
   width: 100%;
   height: 100%;
+  background: #f3f4f6;
+}
+
+html:has(.dark) {
+  background: #101828;
+  @variant dark {
+    background: black;
+  }
 }
 
 input[type='password']::-ms-reveal,
@@ -23,4 +31,32 @@ input:-webkit-autofill:focus {
   transition:
     background-color 0s 600000s,
     color 0s 600000s !important;
+}
+
+.editor h1 {
+  @apply font-black text-5xl;
+}
+
+.editor h2 {
+  @apply font-extrabold text-4xl;
+}
+
+.editor h3 {
+  @apply font-bold text-3xl;
+}
+
+.editor h4 {
+  @apply font-semibold text-2xl;
+}
+
+.editor h5 {
+  @apply font-medium text-xl;
+}
+
+.editor h6 {
+  @apply font-normal text-lg;
+}
+
+.editor p {
+  @apply font-normal text-base;
 }
