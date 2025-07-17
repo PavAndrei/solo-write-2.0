@@ -60,3 +60,71 @@ input:-webkit-autofill:focus {
 .editor p {
   @apply font-normal text-base;
 }
+
+.editor ul {
+  list-style: disc;
+}
+
+.editor ol {
+  list-style: decimal;
+}
+
+.editor pre {
+  background-color: #111827;
+  color: #e5e7eb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.editor pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+.editor p code {
+  background-color: #111827;
+  color: #e5e7eb;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.editor blockquote {
+  position: relative;
+  border-left: 4px solid #e5e7eb;
+  background-color: #f3f4f6;
+  color: #111827;
+  padding: 1rem 1.5rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  border-radius: 0.5rem;
+}
+.editor blockquote::before,
+.editor blockquote::after {
+  font-size: 2rem;
+  color: #111827;
+  position: absolute;
+  font-family: serif;
+}
+
+.editor blockquote::before {
+  content: '“';
+  left: 0.5rem;
+  top: 0.25rem;
+}
+
+.editor blockquote::after {
+  content: '”';
+  right: 0.5rem;
+  bottom: 0.25rem;
+}
+
+.editor hr {
+  margin: 2rem 0;
+}
