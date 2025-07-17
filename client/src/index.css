@@ -11,7 +11,11 @@
 html,
 body,
 #root {
-  @apply w-full h-full bg-gray-100 dark:bg-gray-900;
+  @apply w-full h-full bg-gray-100;
+}
+
+html:has(.dark) {
+  @apply bg-gray-900;
 }
 
 /* Autofill Fix */
@@ -107,16 +111,23 @@ input:-webkit-autofill:focus {
 
 /* Horizontal Rule */
 .editor hr {
-  @apply my-8 border-t border-gray-300 dark:border-gray-600;
+  @apply my-8 border-t border-gray-400 dark:border-gray-600;
 }
 
 @layer utilities {
-  .is-editor-empty::before {
+  /* Стили для placeholder только у первого параграфа */
+  .ProseMirror p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
-    @apply text-gray-400 italic;
     float: left;
-    height: 0;
+    color: theme('colors.gray.400'); /* Tailwind-цвет #aaa заменён на gray.400 */
     pointer-events: none;
-    opacity: 80%;
+    height: 0;
+  }
+
+  .ProseMirror h1.is-editor-empty::before,
+  .ProseMirror ul.is-editor-empty::before,
+  .ProseMirror ol.is-editor-empty::before,
+  .ProseMirror pre.is-editor-empty::before {
+    content: '';
   }
 }

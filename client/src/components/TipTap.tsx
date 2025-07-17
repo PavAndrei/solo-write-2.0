@@ -18,13 +18,14 @@ export const TipTap: FC<TipTapProps> = ({ onChange, error }) => {
         emptyEditorClass: 'is-editor-empty',
         showOnlyWhenEditable: true,
         showOnlyCurrent: false,
+        includeChildren: false,
       }),
     ],
     content: '',
     editorProps: {
       attributes: {
         class:
-          'bg-gray-200 outline-0 border rounded-md h-9 p-8 text-sm md:text-base focus:border-gray-500 border-gray-400 focus:border-2 transition-all duration-300 ease-in-out text-gray-900 z-0 min-h-[150px] editor h-full',
+          'bg-gray-200 outline-2 outline-transparent rounded-md h-9 p-8 text-sm md:text-base transition-all duration-300 ease-in-out text-gray-900 z-0 min-h-[150px] editor h-full focus:outline-gray-900 dark:focus:outline-gray-200 border-2 border-gray-400',
       },
     },
     onUpdate({ editor }) {
@@ -36,7 +37,7 @@ export const TipTap: FC<TipTapProps> = ({ onChange, error }) => {
     <div className="flex flex-col gap-2 justify-stretch min-h-[250px]">
       <span className="italic text-base md:text-lg font-medium">Share your thoughts below</span>
       <Toolbar editor={editor} />
-      <EditorContent editor={editor} className="editor-wrapper" />
+      <EditorContent editor={editor} />
       {error && <span className="text-red-500 text-sm mt-1">{error}</span>}
     </div>
   );

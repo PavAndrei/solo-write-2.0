@@ -49,9 +49,14 @@ export const MultipleImagesUploadField = forwardRef<
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <span className="italic text-base md:text-lg font-medium">{labelText}</span>
+      <span
+        onClick={() => inputRef.current?.click()}
+        className="italic text-base md:text-lg font-medium cursor-pointer"
+      >
+        {labelText}
+      </span>
 
-      <div className="flex flex-wrap gap-4">
+      <button type="button" className="flex flex-wrap gap-4">
         {currentFiles.map((file, index) => (
           <div
             key={index}
@@ -87,7 +92,7 @@ export const MultipleImagesUploadField = forwardRef<
             </div>
           </div>
         )}
-      </div>
+      </button>
 
       <input
         type="file"
