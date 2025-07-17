@@ -78,7 +78,7 @@ export const MultipleImagesUploadField = forwardRef<
 
         {currentFiles.length < maxFiles && (
           <div
-            className="w-24 h-24 rounded-md border-2 border-dashed border-gray-400 flex items-center justify-center cursor-pointer hover:border-gray-500 transition-colors"
+            className="w-24 h-24 rounded-md border-2 border-dashed bg-gray-200 border-gray-400 flex items-center justify-center cursor-pointer hover:border-gray-500 transition-colors"
             onClick={handleClick}
           >
             <div className="flex flex-col items-center text-gray-500">

@@ -9,11 +9,13 @@ import { CustomSelect } from '../components/CustomSelect';
 import { Button } from '../components/Button';
 import { MdSend } from 'react-icons/md';
 import { TipTap } from '../components/TipTap';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { editorSchema } from '../utils/editorSchema';
 
 interface EditorValues {
   title: string;
   category: string[];
-  images?: FileList;
+  images: FileList;
   content: string;
 }
 
@@ -25,12 +27,14 @@ export const Editor = () => {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<EditorValues>();
+  } = useForm<EditorValues>({
+    resolver: zodResolver(editorSchema),
+  });
 
   const onSubmit = (data: EditorValues) => {
     console.log('📝 Article submitted:', {
       ...data,
-      images: data.images ? Array.from(data.images).map((file) => file) : [],
+      images: Array.from(data.images || []),
     });
   };
 
@@ -55,14 +59,6 @@ export const Editor = () => {
                   name="category"
                   control={control}
                   defaultValue={[]}
-                  rules={{
-                    validate: (value) =>
-                      value.length > 0
-                        ? value.length <= 4
-                          ? true
-                          : 'Maximum 4 categories'
-                        : 'Select at least one',
-                  }}
                   render={({ field }) => (
                     <CustomSelect
                       name="category"
@@ -78,19 +74,12 @@ export const Editor = () => {
                 <Controller
                   name="images"
                   control={control}
-                  rules={{
-                    validate: (files) => {
-                      if (!files || files.length === 0) return 'At least one image is required';
-                      if (files.length > 4) return 'Maximum 4 images allowed';
-                      return true;
-                    },
-                  }}
-                  render={({ field: { onChange, value }, fieldState: { error } }) => (
+                  render={({ field: { onChange, value } }) => (
                     <MultipleImagesUploadField
                       labelText="Upload images (max 4)"
                       onChange={(files) => onChange(files || undefined)}
                       value={value || null}
-                      error={error?.message}
+                      error={errors.images?.message}
                     />
                   )}
                 />
@@ -99,7 +88,9 @@ export const Editor = () => {
                   name="content"
                   control={control}
                   defaultValue=""
-                  render={({ field }) => <TipTap onChange={field.onChange} />}
+                  render={({ field }) => (
+                    <TipTap error={errors.content?.message} onChange={field.onChange} />
+                  )}
                 />
 
                 <Button

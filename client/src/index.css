@@ -1,26 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 @import 'tailwindcss';
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-inter: 'Inter', sans-serif;
 }
 
+/* ====== Base Reset ====== */
 html,
 body,
 #root {
-  width: 100%;
-  height: 100%;
-  background: #f3f4f6;
+  @apply w-full h-full bg-gray-100 dark:bg-gray-900;
 }
 
-html:has(.dark) {
-  background: #101828;
-  @variant dark {
-    background: black;
-  }
-}
-
+/* Autofill Fix */
 input[type='password']::-ms-reveal,
 input[type='password']::-ms-clear {
   display: none;
@@ -33,84 +27,70 @@ input:-webkit-autofill:focus {
     color 0s 600000s !important;
 }
 
+/* ====== Editor Styling ====== */
+.editor {
+  font-family: var(--font-inter);
+}
+
 .editor h1 {
-  @apply font-black text-5xl;
+  @apply text-5xl font-black;
 }
 
 .editor h2 {
-  @apply font-extrabold text-4xl;
+  @apply text-4xl font-extrabold;
 }
 
 .editor h3 {
-  @apply font-bold text-3xl;
+  @apply text-3xl font-bold;
 }
 
 .editor h4 {
-  @apply font-semibold text-2xl;
+  @apply text-2xl font-semibold;
 }
 
 .editor h5 {
-  @apply font-medium text-xl;
+  @apply text-xl font-medium;
 }
 
 .editor h6 {
-  @apply font-normal text-lg;
+  @apply text-lg font-normal;
 }
 
 .editor p {
-  @apply font-normal text-base;
+  @apply text-base font-normal;
 }
 
+/* Lists */
 .editor ul {
-  list-style: disc;
+  @apply list-disc ml-6;
 }
 
 .editor ol {
-  list-style: decimal;
+  @apply list-decimal ml-6;
 }
 
+/* Preformatted Code Block */
 .editor pre {
-  background-color: #111827;
-  color: #e5e7eb;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  overflow-x: auto;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin-bottom: 1.5rem;
+  @apply bg-gray-900 text-gray-200 p-4 rounded-lg overflow-x-auto text-sm leading-relaxed mb-6;
 }
 
 .editor pre code {
-  background: none;
-  color: inherit;
-  padding: 0;
-  font-size: inherit;
+  @apply bg-transparent text-inherit p-0 text-inherit;
 }
 
+/* Inline Code */
 .editor p code {
-  background-color: #111827;
-  color: #e5e7eb;
-  padding: 0.2em 0.4em;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  @apply bg-gray-900 text-gray-200 px-2 py-1 rounded text-sm;
 }
 
+/* Blockquote */
 .editor blockquote {
-  position: relative;
-  border-left: 4px solid #e5e7eb;
-  background-color: #f3f4f6;
-  color: #111827;
-  padding: 1rem 1.5rem;
-  margin: 1.5rem 0;
-  font-style: italic;
-  border-radius: 0.5rem;
+  @apply relative border-l-4 border-gray-200 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6 my-6 italic rounded-lg;
 }
+
 .editor blockquote::before,
 .editor blockquote::after {
-  font-size: 2rem;
-  color: #111827;
-  position: absolute;
-  font-family: serif;
+  @apply absolute text-3xl text-gray-900 dark:text-gray-100 font-serif;
 }
 
 .editor blockquote::before {
@@ -125,6 +105,18 @@ input:-webkit-autofill:focus {
   bottom: 0.25rem;
 }
 
+/* Horizontal Rule */
 .editor hr {
-  margin: 2rem 0;
+  @apply my-8 border-t border-gray-300 dark:border-gray-600;
+}
+
+@layer utilities {
+  .is-editor-empty::before {
+    content: attr(data-placeholder);
+    @apply text-gray-400 italic;
+    float: left;
+    height: 0;
+    pointer-events: none;
+    opacity: 80%;
+  }
 }
