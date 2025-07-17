@@ -6,7 +6,6 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { authRouter } from './routes/auth.route';
 import { globalErrorHandler } from './middlewares/handleErrors';
-import 'react-tooltip/dist/react-tooltip.css';
 
 dotenv.config();
 
