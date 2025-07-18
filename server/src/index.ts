@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { authRouter } from './routes/auth.route';
 import { globalErrorHandler } from './middlewares/handleErrors';
+import { articleRouter } from './routes/article.route';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRouter);
+app.use('/api/article', articleRouter);
 
 if (!MONGO_URI) {
   console.error('❌ MONGO_CONNECTION_STRING is missing');
