@@ -15,6 +15,12 @@ export interface ImageRequest extends Request {
   imageUrl?: string;
 }
 
+export interface MultipleImagesRequest extends Request {
+  files?: Express.Multer.File[];
+  imageUrls?: string[];
+  userId?: string;
+}
+
 // Обёртка для загрузки в Cloudinary
 const streamUpload = (buffer: Buffer): Promise<UploadApiResponse> => {
   return new Promise((resolve, reject) => {
@@ -47,8 +53,29 @@ export const uploadImage = [
       next();
     } catch (err) {
       console.error(err);
-      //   res.status(500).json({ message: 'Image upload failed' });
       throw errorHandler(500, 'Image upload failed');
+    }
+  },
+];
+
+export const uploadMultiplyImages = [
+  upload.array('images', 4), // до 4 файлов с ключом "images"
+
+  async (req: MultipleImagesRequest, _res: Response, next: NextFunction) => {
+    try {
+      /* ----- наличие файлов обязательно ----- */
+      if (!req.files || req.files.length === 0)
+        return next(errorHandler(400, 'At least one image is required'));
+
+      const results = await Promise.all(
+        req.files.map((file) => streamUpload(file.buffer))
+      );
+
+      req.imageUrls = results.map((r) => r.secure_url);
+      next();
+    } catch (err) {
+      console.error(err);
+      next(errorHandler(500, 'Multiple image upload failed'));
     }
   },
 ];

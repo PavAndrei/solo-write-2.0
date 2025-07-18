@@ -9,10 +9,14 @@ const articleSchema = new mongoose.Schema(
     },
     categories: {
       type: Array,
-      requred: true,
+      required: true,
       default: [],
     },
-
+    content: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     images: {
       type: Array,
       default: [],
