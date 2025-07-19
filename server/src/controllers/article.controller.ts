@@ -9,7 +9,7 @@ export const create = async (
   res: Response,
   next: NextFunction
 ) => {
-  const userId = req.body.userid; // <-- исправлено
+  const userId = req.userId;
 
   if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
     return next(errorHandler(400, 'Invalid or missing userId'));

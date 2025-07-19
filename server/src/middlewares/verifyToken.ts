@@ -9,6 +9,8 @@ export const verifyToken = (
 ) => {
   const token = req.cookies.access_token;
 
+  console.log('Token from cookie:', token);
+
   if (!token) {
     return next(errorHandler(401, 'Unauthorized'));
   }
@@ -17,7 +19,7 @@ export const verifyToken = (
     if (err) {
       return next(errorHandler(401, 'Unauthorized'));
     }
-    req.user = userData;
+    req.userId = userData.userId;
     next();
   });
 };
