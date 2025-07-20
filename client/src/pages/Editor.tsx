@@ -10,18 +10,25 @@ import { Button } from '../components/Button';
 import { MdSend } from 'react-icons/md';
 import { TipTap } from '../components/TipTap';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { editorSchema } from '../utils/editorSchema';
+import { editorSchema, EditorValues } from '../utils/editorSchema';
+import { useAppDispatch } from '../redux/store';
+import { addToast } from '../redux/toast/slice';
+import { createArticle } from '../api/apiArticle';
+import { useNavigate } from 'react-router-dom';
 
-interface EditorValues {
-  title: string;
-  category: string[];
-  images: FileList;
-  content: string;
-}
+// interface EditorValues {
+//   title: string;
+//   category: string[];
+//   images: FileList;
+//   content: string;
+// }
 
 const categories = ['technology', 'lifestyle', 'fitness', 'travel'];
 
 export const Editor = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -31,11 +38,29 @@ export const Editor = () => {
     resolver: zodResolver(editorSchema),
   });
 
-  const onSubmit = (data: EditorValues) => {
+  const onSubmit = async (data: EditorValues) => {
     console.log('📝 Article submitted:', {
       ...data,
       images: Array.from(data.images || []),
     });
+
+    const editorValuesData = data as EditorValues;
+
+    const formData = new FormData();
+
+    formData.append('title', editorValuesData.title);
+    editorValuesData.category.forEach((categoryItem) => formData.append('category', categoryItem));
+    // editorValuesData.category.forEach((cat) => formData.append('category', cat));
+    formData.append('content', editorValuesData.content);
+    Array.from(editorValuesData.images).forEach((file) => formData.append('images', file));
+
+    try {
+      await createArticle(formData);
+      navigate('/profile');
+    } catch (err) {
+      dispatch(addToast({ color: 'error', text: err }));
+      console.error('Registration failed:', err);
+    }
   };
 
   return (
