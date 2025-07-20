@@ -9,6 +9,10 @@ import { errorHandler } from './handleErrors';
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+type FilesArrayOrMap =
+  | Express.Multer.File[]
+  | { [fieldname: string]: Express.Multer.File[] };
+
 // Расширяем Request, чтобы добавить `imageUrl`
 export interface ImageRequest extends Request {
   file?: Express.Multer.File;
@@ -16,7 +20,7 @@ export interface ImageRequest extends Request {
 }
 
 export interface MultipleImagesRequest extends Request {
-  files?: Express.Multer.File[];
+  files?: FilesArrayOrMap; // точно массив
   imageUrls?: string[];
   userId?: string;
 }
@@ -59,23 +63,32 @@ export const uploadImage = [
 ];
 
 export const uploadMultiplyImages = [
-  upload.array('images', 4), // до 4 файлов с ключом "images"
+  upload.array('images', 4),
 
-  async (req: MultipleImagesRequest, _res: Response, next: NextFunction) => {
-    try {
-      /* ----- наличие файлов обязательно ----- */
-      if (!req.files || req.files.length === 0)
-        return next(errorHandler(400, 'At least one image is required'));
+  // Приводим тип вручную через any => кастим req внутри
+  (req: Request, res: Response, next: NextFunction) => {
+    (async () => {
+      try {
+        if (!Array.isArray(req.files)) {
+          return next(errorHandler(400, 'Expected files to be an array'));
+        }
 
-      const results = await Promise.all(
-        req.files.map((file) => streamUpload(file.buffer))
-      );
+        const typedReq = req as MultipleImagesRequest;
 
-      req.imageUrls = results.map((r) => r.secure_url);
-      next();
-    } catch (err) {
-      console.error(err);
-      next(errorHandler(500, 'Multiple image upload failed'));
-    }
+        if (!Array.isArray(typedReq.files) || typedReq.files.length === 0) {
+          return next(errorHandler(400, 'At least one image is required'));
+        }
+
+        const results = await Promise.all(
+          typedReq.files.map((file) => streamUpload(file.buffer))
+        );
+
+        typedReq.imageUrls = results.map((r) => r.secure_url);
+        next();
+      } catch (err) {
+        console.error(err);
+        next(errorHandler(500, 'Multiple image upload failed'));
+      }
+    })();
   },
 ];
