@@ -54,7 +54,8 @@ export const FileUploadInput: FC<FileUploadInputProps> = ({
         >
           {labelText}
         </span>
-        <div
+        <button
+          type="button"
           className="bg-gray-200 rounded-full h-30 w-30 self-center cursor-pointer"
           onClick={() => fileInputRef.current?.click()}
         >
@@ -75,7 +76,7 @@ export const FileUploadInput: FC<FileUploadInputProps> = ({
               />
             )}
           </AnimationProvider>
-        </div>
+        </button>
         {error && <span className="text-red-500 text-sm text-center">{error.toString()}</span>}
       </div>
     </>

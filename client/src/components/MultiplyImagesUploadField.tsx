@@ -56,7 +56,11 @@ export const MultipleImagesUploadField = forwardRef<
         {labelText}
       </span>
 
-      <button role="for-tab-controlling-btn" type="button" className="flex flex-wrap gap-4">
+      <button
+        role="for-tab-controlling-btn"
+        type="button"
+        className="flex flex-wrap gap-4 max-w-fit"
+      >
         {currentFiles.map((file, index) => (
           <div
             key={index}
