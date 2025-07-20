@@ -11,6 +11,7 @@ import { Profile } from './pages/Profile';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { ToastProvider } from './components/ToastProvider';
 import { Editor } from './pages/Editor';
+import { Articles } from './pages/Articles';
 
 function App() {
   return (
@@ -24,9 +25,12 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/profile" element={<Profile />} />
             </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/editor" element={<Editor />} />
+            </Route>
+            <Route path="/articles" element={<Articles />} />
             <Route path="/signin" element={<Auth type="sign-in" />} />
             <Route path="/signup" element={<Auth type="sign-up" />} />
-            <Route path="/editor" element={<Editor />} />
           </Routes>
         </Main>
         <Footer />

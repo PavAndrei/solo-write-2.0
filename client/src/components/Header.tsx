@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IoLogInOutline } from 'react-icons/io5';
 import { FaUserPlus, FaPenAlt } from 'react-icons/fa';
 import { GiHamburgerMenu } from 'react-icons/gi';
+import { MdArticle } from 'react-icons/md';
 
 import { Container } from './Container';
 import { Logo } from './Logo';
@@ -46,32 +47,40 @@ export const Header = () => {
           <Button className="order-3 md:hidden" onClickFunc={() => setIsDropdownVisible(true)}>
             <GiHamburgerMenu />
           </Button>
+          <div className="items-center gap-2.5 order-4 hidden md:flex">
+            <Link to="/articles">
+              <Button variant={pathname === '/articles' ? 'dark' : 'light'}>
+                <MdArticle /> Catalogue
+              </Button>
+            </Link>
 
-          {isAuthorized ? (
-            <Button onClickFunc={handleSignout} className="order-4 hidden md:flex">
-              Sign Out
-            </Button>
-          ) : (
-            <div className="items-center gap-2.5 order-4 hidden md:flex">
-              <Link to="/editor">
-                <Button variant={pathname === '/editor' ? 'dark' : 'light'}>
-                  <FaPenAlt /> Publish
+            {isAuthorized ? (
+              <>
+                <Button onClickFunc={handleSignout} className="order-4 hidden md:flex">
+                  Sign Out
                 </Button>
-              </Link>
+                <Link to="/editor">
+                  <Button variant={pathname === '/editor' ? 'dark' : 'light'}>
+                    <FaPenAlt /> Publish
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/signin">
+                  <Button variant={pathname === '/signin' ? 'dark' : 'light'}>
+                    <IoLogInOutline /> Sign In
+                  </Button>
+                </Link>
 
-              <Link to="/signin">
-                <Button variant={pathname === '/signin' ? 'dark' : 'light'}>
-                  <IoLogInOutline /> Sign In
-                </Button>
-              </Link>
-
-              <Link to="/signup">
-                <Button variant={pathname === '/signup' ? 'dark' : 'light'}>
-                  <FaUserPlus /> Sign Up
-                </Button>
-              </Link>
-            </div>
-          )}
+                <Link to="/signup">
+                  <Button variant={pathname === '/signup' ? 'dark' : 'light'}>
+                    <FaUserPlus /> Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
         </nav>
       </Container>
       <DropdownMenu
