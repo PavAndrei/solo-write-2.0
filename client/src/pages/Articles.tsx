@@ -10,7 +10,7 @@ export const Articles = () => {
 
   useEffect(() => {
     const fetchArticles = async () => {
-      const res = await fetch('http://localhost:5000/api/article/all');
+      const res = await fetch('http://localhost:5000/api/article');
 
       const data = await res.json();
       setArticles(data.articles);

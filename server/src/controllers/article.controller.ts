@@ -113,7 +113,31 @@ export const getAll = async (
       totalArticles,
       lastMonthArticles,
     });
-  } catch (error) {
-    next(error);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getOneArticle = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { slug } = req.params;
+
+    const article = await Article.findOneAndUpdate(
+      { slug },
+      { $inc: { viewsCount: 1 } },
+      { new: true }
+    );
+
+    if (!article) {
+      return next(errorHandler(404, 'Article is not found'));
+    }
+
+    res.status(200).json({ success: true, data: article });
+  } catch (err) {
+    next(err);
   }
 };

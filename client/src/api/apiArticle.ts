@@ -2,7 +2,7 @@ import { ApiResponse } from './apiAuth';
 
 export const createArticle = async (formData: FormData): Promise<ApiResponse> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/article/create`, {
+    const response = await fetch(`http://localhost:5000/api/article`, {
       method: 'POST',
       body: formData as FormData,
       credentials: 'include',
@@ -18,15 +18,15 @@ export const createArticle = async (formData: FormData): Promise<ApiResponse> =>
   }
 };
 
-export const getAllArticles = async (params): Promise<ApiResponse> => {
-  try {
-    const response = await fetch('http://localhost:5000/api/article/all', {
-      method: 'GET',
-    });
-  } catch (err) {
-    return {
-      success: false,
-      message: err instanceof Error ? err.message : 'Unknown error',
-    };
-  }
-};
+// export const getAllArticles = async (params): Promise<ApiResponse> => {
+//   try {
+//     const response = await fetch('http://localhost:5000/api/article/', {
+//       method: 'GET',
+//     });
+//   } catch (err) {
+//     return {
+//       success: false,
+//       message: err instanceof Error ? err.message : 'Unknown error',
+//     };
+//   }
+// };
