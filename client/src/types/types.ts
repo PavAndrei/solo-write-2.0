@@ -2,6 +2,7 @@ export type Author = {
   articlesCount: number;
   email: string;
   _id: string;
+  id: string;
   username: string;
 };
 
@@ -10,9 +11,12 @@ export type Article = {
   title: string;
   description: string;
   categories: string[];
-  imagesPaths: string[];
-  content: string;
-  author: Author;
+  likesCount: number;
+  images: string[];
+  user: Author;
+  updatedAt: string;
+  viewsCount: number;
+  slug: string;
 };
 
 export type ArticleList = Article[];

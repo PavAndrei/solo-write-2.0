@@ -1,10 +1,24 @@
 import { FC } from 'react';
-import { Article } from '../types/types';
 import { Button } from './Button';
 import { BiLike } from 'react-icons/bi';
 import { GrView } from 'react-icons/gr';
+import { useNavigate } from 'react-router-dom';
+import { Author } from '../types/types';
 
-export const ArticleCard: FC<Article> = ({
+interface ArticleCardProps {
+  _id: string;
+  title: string;
+  description: string;
+  categories: string[];
+  likesCount: number;
+  images: string[];
+  user: Author;
+  updatedAt: string;
+  viewsCount: number;
+  slug: string;
+}
+
+export const ArticleCard: FC<ArticleCardProps> = ({
   title,
   description,
   categories,
@@ -13,8 +27,11 @@ export const ArticleCard: FC<Article> = ({
   images,
   updatedAt,
   viewsCount,
+  slug,
 }) => {
   const date = new Date(updatedAt);
+
+  const navigate = useNavigate();
 
   return (
     <li className="flex flex-col justify-between gap-4 border rounded-md p-2 pt-4">
@@ -41,17 +58,17 @@ export const ArticleCard: FC<Article> = ({
         alt={title}
       />
 
-      <div className="flex gap-2 justify-between">
+      <div className="flex gap-2 justify-between cursor-pointer">
         <div className="flex gap-2 items-center">
-          <BiLike /> <span>{likesCount}</span>
+          <BiLike className="text-xl" /> <span>{likesCount}</span>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <GrView /> <span>{viewsCount}</span>
+        <div className="flex gap-2 items-center cursor-pointer">
+          <GrView className="text-xl" /> <span>{viewsCount}</span>
         </div>
       </div>
 
-      <Button>Read More</Button>
+      <Button onClickFunc={() => navigate(slug)}>Read More</Button>
     </li>
   );
 };

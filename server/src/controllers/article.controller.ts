@@ -17,6 +17,12 @@ export const create = async (
   }
 
   try {
+    const slug = req.body.title
+      .split(' ')
+      .join('-')
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9-]/g, '');
+
     const newArticle = new Article({
       title: req.body.title,
       description: req.body.description,
@@ -26,6 +32,7 @@ export const create = async (
       viewsCount: 0,
       likesCount: 0,
       user: userId,
+      slug,
     });
 
     const savedArticle = await newArticle.save();

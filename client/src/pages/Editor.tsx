@@ -15,8 +15,7 @@ import { useAppDispatch } from '../redux/store';
 import { addToast } from '../redux/toast/slice';
 import { createArticle } from '../api/apiArticle';
 import { useNavigate } from 'react-router-dom';
-
-const categories = ['technology', 'lifestyle', 'fitness', 'travel'];
+import { CATEGORIES } from '../constants/categories';
 
 export const Editor = () => {
   const dispatch = useAppDispatch();
@@ -95,7 +94,7 @@ export const Editor = () => {
                     <CustomSelect
                       name="category"
                       labelText="Select up to 4 categories"
-                      options={categories}
+                      options={CATEGORIES}
                       selected={field.value}
                       onChange={field.onChange}
                       error={errors.category?.message}

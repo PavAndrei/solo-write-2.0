@@ -26,6 +26,11 @@ const articleSchema = new mongoose.Schema(
       type: Array,
       default: [],
     },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     viewsCount: { type: Number, default: 0 },
     likesCount: { type: Number, default: 0 },
     user: {
