@@ -18,8 +18,6 @@ export const verifyToken = (
 ) => {
   const token = req.cookies.access_token;
 
-  console.log('Token from cookie:', token);
-
   if (!token) {
     return next(errorHandler(401, 'Unauthorized'));
   }
@@ -34,7 +32,6 @@ export const verifyToken = (
 
       const userData = decoded as JwtPayload;
 
-      // Явно типизировано
       req.userId = userData.userId;
 
       next();
