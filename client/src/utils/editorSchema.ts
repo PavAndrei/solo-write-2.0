@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
 export const editorSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
+  title: z.string().min(2, 'Title is required').max(35),
+
+  description: z.string().min(10, 'Description is required'),
 
   category: z
     .array(z.string())

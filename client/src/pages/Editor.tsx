@@ -16,13 +16,6 @@ import { addToast } from '../redux/toast/slice';
 import { createArticle } from '../api/apiArticle';
 import { useNavigate } from 'react-router-dom';
 
-// interface EditorValues {
-//   title: string;
-//   category: string[];
-//   images: FileList;
-//   content: string;
-// }
-
 const categories = ['technology', 'lifestyle', 'fitness', 'travel'];
 
 export const Editor = () => {
@@ -49,14 +42,20 @@ export const Editor = () => {
     const formData = new FormData();
 
     formData.append('title', editorValuesData.title);
+    formData.append('description', editorValuesData.description);
     editorValuesData.category.forEach((categoryItem) => formData.append('category', categoryItem));
-    // editorValuesData.category.forEach((cat) => formData.append('category', cat));
     formData.append('content', editorValuesData.content);
     Array.from(editorValuesData.images).forEach((file) => formData.append('images', file));
 
     try {
-      await createArticle(formData);
-      navigate('/profile');
+      const result = await createArticle(formData);
+      console.log(result);
+      if (result.success) {
+        dispatch(addToast({ color: 'error', text: 'The Article has been created' }));
+        navigate('/profile');
+      } else {
+        dispatch(addToast({ color: 'error', text: result.message }));
+      }
     } catch (err) {
       dispatch(addToast({ color: 'error', text: err }));
       console.error('Registration failed:', err);
@@ -78,6 +77,14 @@ export const Editor = () => {
                   type="text"
                   {...register('title', { required: 'Title is required' })}
                   error={errors.title?.message}
+                />
+
+                <TextField
+                  labelText="Description"
+                  placeholder="Enter article description"
+                  type="text"
+                  {...register('description', { required: 'Description is required' })}
+                  error={errors.description?.message}
                 />
 
                 <Controller

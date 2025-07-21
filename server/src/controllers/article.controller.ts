@@ -18,9 +18,9 @@ export const create = async (
 
   try {
     const newArticle = new Article({
-      userId: userId,
       title: req.body.title,
-      categories: req.body.categories,
+      description: req.body.description,
+      categories: req.body.category,
       content: req.body.content,
       images: req.imageUrls,
       viewsCount: 0,
@@ -40,7 +40,11 @@ export const create = async (
       .populate('user', 'username email avatarUrl')
       .lean();
 
-    return res.status(201).json({ ...populatedArticle });
+    return res.status(201).json({
+      success: true,
+      message: 'The article has been created',
+      data: { ...populatedArticle },
+    });
   } catch (err) {
     next(err);
   }
@@ -77,13 +81,13 @@ export const getAll = async (
       ];
     }
 
-    const posts = await Article.find(query)
+    const articles = await Article.find(query)
       .sort({ updatedAt: sortDirection })
       .skip(startIndex)
       .limit(limit)
       .populate('user', 'username email');
 
-    const totalPosts = await Article.countDocuments(query);
+    const totalArticles = await Article.countDocuments(query);
 
     const now = new Date();
     const oneMonthAgo = new Date(
@@ -92,15 +96,15 @@ export const getAll = async (
       now.getDate()
     );
 
-    const lastMonthPosts = await Article.countDocuments({
+    const lastMonthArticles = await Article.countDocuments({
       ...query,
       createdAt: { $gte: oneMonthAgo },
     });
 
     res.status(200).json({
-      posts,
-      totalPosts,
-      lastMonthPosts,
+      articles,
+      totalArticles,
+      lastMonthArticles,
     });
   } catch (error) {
     next(error);

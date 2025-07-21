@@ -2,11 +2,12 @@ import mongoose from 'mongoose';
 
 const articleSchema = new mongoose.Schema(
   {
-    userId: {
+    title: {
       type: String,
       required: true,
+      unique: true,
     },
-    title: {
+    description: {
       type: String,
       required: true,
       unique: true,
