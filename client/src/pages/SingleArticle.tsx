@@ -7,12 +7,14 @@ import { useEffect, useState } from 'react';
 import { Author } from '../types/types';
 import { Button } from '../components/Button';
 import { IoIosArrowBack } from 'react-icons/io';
+import { ImagesSlider } from '../components/ImagesSlider';
 
 type Article = {
   title: string;
   description: string;
   content: string | TrustedHTML;
   user: Author;
+  images: string[];
 };
 
 export const SingleArticle = () => {
@@ -56,6 +58,9 @@ export const SingleArticle = () => {
                 {article?.user.username}
               </Link>
             </div>
+
+            <ImagesSlider slides={article?.images} />
+
             <Button onClickFunc={() => navigate(-1)} className="max-w-25">
               <IoIosArrowBack /> Back
             </Button>
