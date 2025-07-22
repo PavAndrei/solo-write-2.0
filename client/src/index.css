@@ -65,52 +65,63 @@ input:-webkit-autofill:focus {
 }
 
 /* Lists */
-.editor ul {
+.editor ul,
+.article-container ul {
   @apply list-disc ml-6;
 }
 
-.editor ol {
+.editor ol,
+.article-container ol {
   @apply list-decimal ml-6;
 }
 
 /* Preformatted Code Block */
-.editor pre {
+.editor pre,
+.article-container pre {
   @apply bg-gray-900 text-gray-200 p-4 rounded-lg overflow-x-auto text-sm leading-relaxed mb-6;
 }
 
-.editor pre code {
+.editor pre code,
+.article-container pre code {
   @apply bg-transparent text-inherit p-0 text-inherit;
 }
 
 /* Inline Code */
-.editor p code {
+.editor p code,
+.article-container p code {
   @apply bg-gray-900 text-gray-200 px-2 py-1 rounded text-sm;
 }
 
 /* Blockquote */
-.editor blockquote {
+.editor blockquote,
+.article-container blockquote {
   @apply relative border-l-4 border-gray-200 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6 my-6 italic rounded-lg;
 }
 
 .editor blockquote::before,
-.editor blockquote::after {
+.editor blockquote::after,
+.article-container blockquote::before,
+.article-container blockquote::after {
   @apply absolute text-3xl text-gray-900 dark:text-gray-100 font-serif;
 }
 
-.editor blockquote::before {
+.editor blockquote::before,
+.article-container blockquote::before {
   content: '“';
   left: 0.5rem;
   top: 0.25rem;
 }
 
-.editor blockquote::after {
+.editor blockquote::after,
+.article-container blockquote::after {
   content: '”';
   right: 0.5rem;
   bottom: 0.25rem;
 }
 
 /* Horizontal Rule */
-.editor hr {
+.editor hr,
+.article-container hr {
   @apply my-8 border-t border-gray-400 dark:border-gray-600;
 }
 
@@ -130,4 +141,28 @@ input:-webkit-autofill:focus {
   .ProseMirror pre.is-editor-empty::before {
     content: '';
   }
+}
+
+.article-container h1 {
+  @apply text-4xl font-black text-center;
+}
+
+.article-container h2 {
+  @apply text-3xl font-extrabold text-center;
+}
+
+.article-container h3 {
+  @apply text-2xl font-bold text-center;
+}
+
+.article-container h4 {
+  @apply text-xl font-semibold text-center;
+}
+
+.article-container h5 {
+  @apply text-lg font-medium text-center;
+}
+
+.article-container h6 {
+  @apply text-base font-normal text-center;
 }

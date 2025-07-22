@@ -62,6 +62,7 @@ export const signup = async (
         httpOnly: true,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production', // HTTPS в продакшене
+        maxAge: 8 * 60 * 60 * 1000,
       })
       .json({
         success: true,
@@ -117,6 +118,7 @@ export const signin = async (
         httpOnly: true,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
+        maxAge: 8 * 60 * 60 * 1000,
       })
       .json({
         success: true,

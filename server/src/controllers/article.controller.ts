@@ -130,7 +130,7 @@ export const getOneArticle = async (
       { slug },
       { $inc: { viewsCount: 1 } },
       { new: true }
-    );
+    ).populate('user', 'username avatarUrl');
 
     if (!article) {
       return next(errorHandler(404, 'Article is not found'));

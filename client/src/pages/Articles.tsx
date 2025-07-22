@@ -19,8 +19,6 @@ export const Articles = () => {
     fetchArticles();
   }, []);
 
-  console.log(articles);
-
   return (
     <AnimatePresence>
       <AnimationProvider>

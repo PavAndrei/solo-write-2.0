@@ -13,8 +13,27 @@ import { ToastProvider } from './components/ToastProvider';
 import { Editor } from './pages/Editor';
 import { Articles } from './pages/Articles';
 import { SingleArticle } from './pages/SingleArticle';
+import { Dashboard } from './pages/Dashboard';
+import { useAppDispatch, useAppSelector } from './redux/store';
+import { useEffect } from 'react';
+import { checkUserSession } from './redux/auth/slice';
 
 function App() {
+  const dispatch = useAppDispatch();
+  const { isLoading, user } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    const verifySession = async () => {
+      try {
+        await dispatch(checkUserSession()).unwrap();
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    if (!user && !isLoading) verifySession();
+  }, []);
+
   return (
     <ThemeProvider>
       <Layout>
@@ -24,13 +43,11 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route element={<ProtectedRoute />}>
-              <Route path="/profile" element={<Profile />} />
-            </Route>
-            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/editor" element={<Editor />} />
             </Route>
             <Route path="/articles" element={<Articles />} />
-            <Route path="/articles/:id" element={<SingleArticle />} />
+            <Route path="/articles/:slug" element={<SingleArticle />} />
             <Route path="/signin" element={<Auth type="sign-in" />} />
             <Route path="/signup" element={<Auth type="sign-up" />} />
           </Routes>
