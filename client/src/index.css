@@ -7,7 +7,6 @@
   --font-inter: 'Inter', sans-serif;
 }
 
-/* ====== Base Reset ====== */
 html,
 body,
 #root {
@@ -18,7 +17,6 @@ html:has(.dark) {
   @apply bg-gray-900;
 }
 
-/* Autofill Fix */
 input[type='password']::-ms-reveal,
 input[type='password']::-ms-clear {
   display: none;
@@ -31,46 +29,48 @@ input:-webkit-autofill:focus {
     color 0s 600000s !important;
 }
 
-/* ====== Editor Styling ====== */
 .editor {
   font-family: var(--font-inter);
 }
 
 .editor h1,
 .article-container h1 {
-  @apply text-5xl font-black;
+  @apply text-3xl md:text-4xl lg:text-5xl font-black;
+}
+
+.article-container h1 {
+  @apply text-center mb-5;
 }
 
 .editor h2,
 .article-container h2 {
-  @apply text-4xl font-extrabold;
+  @apply text-4xl md:text-3xl lg:text-4xl font-extrabold;
 }
 
 .editor h3,
 .article-container h3 {
-  @apply text-3xl font-bold;
+  @apply text-3xl md:text-2xl lg:text-3xl font-bold;
 }
 
 .editor h4,
 .article-container h4 {
-  @apply text-2xl font-semibold;
+  @apply text-2xl md:text-xl lg:text-2xl font-semibold;
 }
 
 .editor h5,
 .article-container h5 {
-  @apply text-xl font-medium;
+  @apply text-xl md:text-lg lg:text-xl font-medium;
 }
 
 .editor h6,
 .article-container h6 {
-  @apply text-lg font-normal;
+  @apply text-lg md:text-base lg:text-lg font-normal;
 }
 
 .editor p {
-  @apply text-base font-normal;
+  @apply text-sm md:text-base font-normal;
 }
 
-/* Lists */
 .editor ul,
 .article-container ul {
   @apply list-disc ml-6;
@@ -81,7 +81,6 @@ input:-webkit-autofill:focus {
   @apply list-decimal ml-6;
 }
 
-/* Preformatted Code Block */
 .editor pre,
 .article-container pre {
   @apply bg-gray-900 text-gray-200 p-4 rounded-lg overflow-x-auto text-sm leading-relaxed mb-6;
@@ -92,13 +91,11 @@ input:-webkit-autofill:focus {
   @apply bg-transparent text-inherit p-0 text-inherit;
 }
 
-/* Inline Code */
 .editor p code,
 .article-container p code {
   @apply bg-gray-900 text-gray-200 px-2 py-1 rounded text-sm;
 }
 
-/* Blockquote */
 .editor blockquote,
 .article-container blockquote {
   @apply relative border-l-4 border-gray-200 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 p-6 my-6 italic rounded-lg;
@@ -125,18 +122,16 @@ input:-webkit-autofill:focus {
   bottom: 0.25rem;
 }
 
-/* Horizontal Rule */
 .editor hr,
 .article-container hr {
   @apply my-8 border-t border-gray-400 dark:border-gray-600;
 }
 
 @layer utilities {
-  /* Стили для placeholder только у первого параграфа */
   .ProseMirror p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
     float: left;
-    color: theme('colors.gray.400'); /* Tailwind-цвет #aaa заменён на gray.400 */
+    color: theme('colors.gray.400');
     pointer-events: none;
     height: 0;
   }
@@ -149,30 +144,6 @@ input:-webkit-autofill:focus {
   }
 }
 
-/* Кастомные стили пагинации */
-
-/* .swiper-horizontal > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic,
-.swiper-pagination-horizontal.swiper-pagination-bullets.swiper-pagination-bullets-dynamic {
-  position: absolute;
-  bottom: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.swiper-pagination-bullet-custom {
-  width: 10px;
-  height: 10px;
-  background-color: #d1d5db;
-  border-radius: 50%;
-  opacity: 1;
-  margin: 0 6px !important;
-  transition: all 0.3s ease;
-}
-
-.swiper-pagination-bullet-active-custom {
-  background-color: #1f2937;
-} */
-
 @layer components {
   .swiper-pagination-bullet-custom {
     @apply w-2.5 h-2.5 bg-gray-300 rounded-full opacity-100 mx-1.5 transition-all duration-300;
@@ -182,8 +153,18 @@ input:-webkit-autofill:focus {
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1536px) {
   .swiper-pagination-bullet-active-custom {
     @apply hidden;
   }
+}
+
+.swiper-button-prev-custom.swiper-button-disabled,
+.swiper-button-next-custom.swiper-button-disabled {
+  @apply opacity-30;
+}
+
+.swiper-pagination-bullet-disabled span {
+  display: none !important;
+  opacity: 0 !important;
 }

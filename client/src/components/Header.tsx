@@ -50,7 +50,7 @@ export const Header = () => {
           <div className="items-center gap-2.5 order-4 hidden md:flex">
             <Link to="/articles">
               <Button variant={pathname === '/articles' ? 'dark' : 'light'}>
-                <MdArticle /> Catalogue
+                <MdArticle /> Articles
               </Button>
             </Link>
 
