@@ -36,27 +36,33 @@ input:-webkit-autofill:focus {
   font-family: var(--font-inter);
 }
 
-.editor h1 {
+.editor h1,
+.article-container h1 {
   @apply text-5xl font-black;
 }
 
-.editor h2 {
+.editor h2,
+.article-container h2 {
   @apply text-4xl font-extrabold;
 }
 
-.editor h3 {
+.editor h3,
+.article-container h3 {
   @apply text-3xl font-bold;
 }
 
-.editor h4 {
+.editor h4,
+.article-container h4 {
   @apply text-2xl font-semibold;
 }
 
-.editor h5 {
+.editor h5,
+.article-container h5 {
   @apply text-xl font-medium;
 }
 
-.editor h6 {
+.editor h6,
+.article-container h6 {
   @apply text-lg font-normal;
 }
 
@@ -143,26 +149,41 @@ input:-webkit-autofill:focus {
   }
 }
 
-.article-container h1 {
-  @apply text-4xl font-black text-center;
+/* Кастомные стили пагинации */
+
+/* .swiper-horizontal > .swiper-pagination-bullets.swiper-pagination-bullets-dynamic,
+.swiper-pagination-horizontal.swiper-pagination-bullets.swiper-pagination-bullets-dynamic {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-.article-container h2 {
-  @apply text-3xl font-extrabold text-center;
+.swiper-pagination-bullet-custom {
+  width: 10px;
+  height: 10px;
+  background-color: #d1d5db;
+  border-radius: 50%;
+  opacity: 1;
+  margin: 0 6px !important;
+  transition: all 0.3s ease;
 }
 
-.article-container h3 {
-  @apply text-2xl font-bold text-center;
+.swiper-pagination-bullet-active-custom {
+  background-color: #1f2937;
+} */
+
+@layer components {
+  .swiper-pagination-bullet-custom {
+    @apply w-2.5 h-2.5 bg-gray-300 rounded-full opacity-100 mx-1.5 transition-all duration-300;
+  }
+  .swiper-pagination-bullet-active-custom {
+    @apply bg-gray-800;
+  }
 }
 
-.article-container h4 {
-  @apply text-xl font-semibold text-center;
-}
-
-.article-container h5 {
-  @apply text-lg font-medium text-center;
-}
-
-.article-container h6 {
-  @apply text-base font-normal text-center;
+@media (min-width: 1280px) {
+  .swiper-pagination-bullet-active-custom {
+    @apply hidden;
+  }
 }

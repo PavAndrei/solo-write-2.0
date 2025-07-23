@@ -40,26 +40,27 @@ export const SingleArticle = () => {
       <AnimationProvider>
         <Container>
           <section className="py-[60px] md:py-[100px] xl:py-[120px] flex flex-col gap-4">
-            <PageTitle>{article?.title}</PageTitle>
+            {/* <PageTitle>{article?.title}</PageTitle>
             <p className="indent-5 md:indent-10 italic text-sm max-w-1/3 text-right self-end">
               {article?.description}
-            </p>
+            </p> */}
 
             <div
               dangerouslySetInnerHTML={article && { __html: article.content }}
-              className="article-container flex flex-col gap-2"
+              className="article-container flex flex-col gap-5"
             ></div>
-            <div className="text-right italic text-md">
+
+            {article?.images && <ImagesSlider slides={article?.images} />}
+
+            <div className="text-right italic text-md mt-10 xl:mt-5">
               written by{' '}
               <Link
                 to={`/profile/${article?.user._id}`}
-                className="font-bold underline capitalize cursor-pointer "
+                className="font-bold underline capitalize cursor-pointer"
               >
                 {article?.user.username}
               </Link>
             </div>
-
-            <ImagesSlider slides={article?.images} />
 
             <Button onClickFunc={() => navigate(-1)} className="max-w-25">
               <IoIosArrowBack /> Back
