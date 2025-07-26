@@ -3,6 +3,7 @@ import {
   create,
   getAll,
   getOneArticle,
+  toggleLike,
 } from '../controllers/article.controller';
 import { uploadMultiplyImages } from '../middlewares/uploadImages';
 import { verifyToken } from '../middlewares/verifyToken';
@@ -21,3 +22,5 @@ articleRouter.post(
 
 articleRouter.get('/', getAll);
 articleRouter.get('/:slug', getOneArticle);
+
+articleRouter.post('/:id/like', verifyToken, toggleLike);

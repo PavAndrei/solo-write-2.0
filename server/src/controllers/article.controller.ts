@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import Article from '../models/Article.model';
-import mongoose from 'mongoose';
+import mongoose, {
+  ObjectId,
+  ObjectIdSchemaDefinition,
+  ObjectIdToString,
+  Types,
+} from 'mongoose';
 import { errorHandler } from '../middlewares/handleErrors';
 import { MultipleImagesRequest } from '../middlewares/uploadImages';
 import User from '../models/User.model';
@@ -137,6 +142,43 @@ export const getOneArticle = async (
     }
 
     res.status(200).json({ success: true, data: article });
+  } catch (err) {
+    next(err);
+  }
+};
+
+interface RequestWithUserId extends Request {
+  userId?: Types.ObjectId;
+}
+
+export const toggleLike = async (
+  req: RequestWithUserId,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const article = await Article.findById(req.params.id);
+    if (!article) return next(errorHandler(404, 'Article not found'));
+
+    const userId = req.userId;
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return next(errorHandler(400, 'Invalid or missing userId'));
+    }
+
+    const likeIndex = article.likedBy.indexOf(userId);
+
+    if (likeIndex === -1) {
+      // Добавляем лайк
+      article.likedBy.push(userId);
+      article.likesCount -= 1;
+    } else {
+      // Убираем лайк
+      article.likedBy.splice(likeIndex, 1);
+      article.likesCount += 1;
+    }
+
+    await article.save();
+    res.json({ likes: article.likesCount, isLiked: likeIndex !== -1 });
   } catch (err) {
     next(err);
   }

@@ -33,6 +33,7 @@ const articleSchema = new mongoose.Schema(
     },
     viewsCount: { type: Number, default: 0 },
     likesCount: { type: Number, default: 0 },
+    likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
