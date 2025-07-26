@@ -12,8 +12,6 @@ interface ImagesSliderProps {
 }
 
 export const ImagesSlider: FC<ImagesSliderProps> = ({ slides }) => {
-  console.log(slides);
-
   return (
     <div className="relative">
       <Swiper

@@ -9,8 +9,10 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { ImagesSlider } from '../components/ImagesSlider';
 import { BiLike } from 'react-icons/bi';
 import { GrView } from 'react-icons/gr';
+import { toggleArticleLike } from '../api/apiArticle';
 
 type Article = {
+  _id: string;
   title: string;
   description: string;
   content: string | TrustedHTML;
@@ -36,7 +38,12 @@ export const SingleArticle = () => {
     fetchOneArticle();
   }, []);
 
-  console.log(article);
+  const toggleLike = async (id?: string) => {
+    if (id) {
+      const res = await toggleArticleLike(id);
+      console.log(res);
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -50,7 +57,7 @@ export const SingleArticle = () => {
             <div
               dangerouslySetInnerHTML={article && { __html: article.content }}
               className="article-container flex flex-col gap-5"
-            ></div>
+            />
 
             {article?.images && article?.images.length > 1 ? (
               <ImagesSlider slides={article?.images} />
@@ -64,7 +71,7 @@ export const SingleArticle = () => {
 
             <div className="mt-10 xl:mt-5">
               <div className="flex gap-5 cursor-pointer">
-                <div className="flex gap-2 items-center">
+                <div onClick={() => toggleLike(article?._id)} className="flex gap-2 items-center">
                   <BiLike className="text-2xl" /> <span>{article?.likesCount}</span>
                 </div>
 

@@ -170,15 +170,17 @@ export const toggleLike = async (
     if (likeIndex === -1) {
       // Добавляем лайк
       article.likedBy.push(userId);
-      article.likesCount -= 1;
+      article.likesCount += 1;
     } else {
       // Убираем лайк
       article.likedBy.splice(likeIndex, 1);
-      article.likesCount += 1;
+      article.likesCount -= 1;
     }
 
     await article.save();
-    res.json({ likes: article.likesCount, isLiked: likeIndex !== -1 });
+    res
+      .status(200)
+      .json({ success: true, message: 'The article has been toggled' });
   } catch (err) {
     next(err);
   }
