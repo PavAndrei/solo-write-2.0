@@ -1,6 +1,11 @@
-import { ApiResponse } from './apiAuth';
+import {
+  ApiCreateArticleResponse,
+  GetAllArticlesApiResponse,
+  ToggleArticleLikeApiResponse,
+  GetAllArticlesParams,
+} from '../types/apiTypes';
 
-export const createArticle = async (formData: FormData): Promise<ApiResponse> => {
+export const createArticle = async (formData: FormData): Promise<ApiCreateArticleResponse> => {
   try {
     const response = await fetch(`http://localhost:5000/api/article`, {
       method: 'POST',
@@ -9,7 +14,12 @@ export const createArticle = async (formData: FormData): Promise<ApiResponse> =>
     });
 
     const data = await response.json();
-    return data;
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    return data as ApiCreateArticleResponse;
   } catch (err) {
     return {
       success: false,
@@ -18,16 +28,9 @@ export const createArticle = async (formData: FormData): Promise<ApiResponse> =>
   }
 };
 
-type getAllArticlesParams = {
-  startIndex?: string;
-  limit?: string;
-  order?: string;
-  userId?: string;
-  category?: string;
-  searchTerm?: string;
-};
-
-export const getAllArticles = async (params?: getAllArticlesParams): Promise => {
+export const getAllArticles = async (
+  params?: GetAllArticlesParams
+): Promise<GetAllArticlesApiResponse> => {
   const startIndex = params?.startIndex ? `startIndex=${params.startIndex}` : '';
   const limit = params?.limit ? `limit=${params.limit}` : '';
   const order = params?.order ? `order=${params.order}` : '';
@@ -41,7 +44,12 @@ export const getAllArticles = async (params?: getAllArticlesParams): Promise => 
     );
 
     const data = await res.json();
-    return data;
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    return data as GetAllArticlesApiResponse;
   } catch (err) {
     return {
       success: false,
@@ -50,7 +58,7 @@ export const getAllArticles = async (params?: getAllArticlesParams): Promise => 
   }
 };
 
-export const toggleArticleLike = async (id: string): Promise<ApiResponse> => {
+export const toggleArticleLike = async (id: string): Promise<ToggleArticleLikeApiResponse> => {
   try {
     const response = await fetch(`http://localhost:5000/api/article/${id}/like`, {
       method: 'POST',
@@ -58,7 +66,12 @@ export const toggleArticleLike = async (id: string): Promise<ApiResponse> => {
     });
 
     const data = await response.json();
-    return data;
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    return data as ToggleArticleLikeApiResponse;
   } catch (err) {
     return {
       success: false,

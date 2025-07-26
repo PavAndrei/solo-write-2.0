@@ -1,11 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Article from '../models/Article.model';
-import mongoose, {
-  ObjectId,
-  ObjectIdSchemaDefinition,
-  ObjectIdToString,
-  Types,
-} from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import { errorHandler } from '../middlewares/handleErrors';
 import { MultipleImagesRequest } from '../middlewares/uploadImages';
 import User from '../models/User.model';
@@ -180,7 +175,11 @@ export const toggleLike = async (
     await article.save();
     res
       .status(200)
-      .json({ success: true, message: 'The article has been toggled' });
+      .json({
+        success: true,
+        message: 'The article has been toggled',
+        likesCount: article.likesCount,
+      });
   } catch (err) {
     next(err);
   }

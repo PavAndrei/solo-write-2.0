@@ -161,6 +161,7 @@ export const getMe = async (
         username: user.username,
         avatarUrl: user.avatarUrl,
       },
+      message: 'Got the user data',
     });
   } catch (err) {
     next(err);

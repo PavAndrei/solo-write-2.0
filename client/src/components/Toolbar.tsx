@@ -203,8 +203,8 @@ export const Toolbar = ({ editor }: { editor: Editor }) => {
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           isActive={editorState.isCodeBlock}
-          message="Unordered list"
-          tooltipSelector="unordered-list-btn"
+          message="Code block"
+          tooltipSelector="code-block-btn"
         >
           <FaCode />
         </ToolbarButton>

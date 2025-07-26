@@ -1,28 +1,22 @@
+import { BASE_API_URL } from '../constants/paths';
+import { ApiAuthResponse } from '../types/apiTypes';
 import { SignInData } from '../utils/authSchemas';
 
-type UserData = {
-  userId: string;
-  email: string;
-  role: string;
-  verified: boolean;
-};
-
-export type ApiResponse = {
-  success: boolean;
-  message?: string;
-  user?: UserData;
-};
-
-export const signUp = async (formData: FormData): Promise<ApiResponse> => {
+export const signUp = async (formData: FormData): Promise<ApiAuthResponse> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/auth/signup`, {
+    const response = await fetch(`${BASE_API_URL}/auth/signup`, {
       method: 'POST',
       body: formData as FormData,
       credentials: 'include',
     });
 
     const data = await response.json();
-    return data;
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    return data as ApiAuthResponse;
   } catch (err) {
     return {
       success: false,
@@ -31,11 +25,9 @@ export const signUp = async (formData: FormData): Promise<ApiResponse> => {
   }
 };
 
-export const signIn = async (
-  formData: Omit<SignInData, 'repeatPassword' | 'terms' | 'file' | 'username'>
-): Promise<ApiResponse> => {
+export const signIn = async (formData: SignInData): Promise<ApiAuthResponse> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/auth/signin`, {
+    const response = await fetch(`${BASE_API_URL}/auth/signin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -45,7 +37,12 @@ export const signIn = async (
     });
 
     const data = await response.json();
-    return data;
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    return data as ApiAuthResponse;
   } catch (err) {
     return {
       success: false,
@@ -54,12 +51,18 @@ export const signIn = async (
   }
 };
 
-export const checkAuth = async (): Promise<ApiResponse> => {
+export const checkAuth = async (): Promise<ApiAuthResponse> => {
   try {
-    const response = await fetch('http://localhost:5000/api/auth/me', {
+    const response = await fetch(`${BASE_API_URL}/auth/me`, {
       credentials: 'include',
     });
-    return await response.json();
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    return data as ApiAuthResponse;
   } catch (err) {
     return {
       success: false,
@@ -68,13 +71,19 @@ export const checkAuth = async (): Promise<ApiResponse> => {
   }
 };
 
-export const signout = async (): Promise<ApiResponse> => {
+export const signout = async (): Promise<ApiAuthResponse> => {
   try {
-    const response = await fetch('http://localhost:5000/api/auth/signout', {
+    const response = await fetch(`${BASE_API_URL}/auth/signout`, {
       method: 'POST',
       credentials: 'include',
     });
-    return await response.json();
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+
+    return data as ApiAuthResponse;
   } catch (err) {
     return {
       success: false,

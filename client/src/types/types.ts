@@ -8,6 +8,7 @@ export type Author = {
 
 export type Article = {
   _id: string;
+  _v: number;
   title: string;
   description: string;
   categories: string[];
@@ -15,8 +16,18 @@ export type Article = {
   images: string[];
   user: Author;
   updatedAt: string;
+  createdAt: string;
+  likedBy: string[];
   viewsCount: number;
   slug: string;
+  content: string;
+};
+
+export type UserData = {
+  userId: string;
+  email: string;
+  role: string;
+  verified: boolean;
 };
 
 export type ArticleList = Article[];
