@@ -7,7 +7,7 @@ import { getAllArticles } from '../api/apiArticle';
 import { useFetch } from '../hooks/useFetch';
 
 export const Articles = () => {
-  const { data, error, isLoading } = useFetch(getAllArticles);
+  const { data, error, isLoading } = useFetch(getAllArticles, {});
 
   console.log(data);
 
@@ -17,7 +17,7 @@ export const Articles = () => {
         <Container>
           <section className="py-[60px] md:py-[100px] xl:py-[120px]">
             <PageTitle>Articles</PageTitle>
-            <ArticlesList articles={data?.articles} />
+            {data && <ArticlesList articles={data?.articles} />}
           </section>
         </Container>
       </AnimationProvider>

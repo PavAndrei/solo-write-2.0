@@ -79,7 +79,11 @@ export const getAll = async (
     const query: any = {};
 
     if (req.query.userId) query.userId = req.query.userId;
-    if (req.query.category) query.categories = req.query.category;
+
+    if (req.query.category) {
+      const categories = (req.query.category as string).split(',');
+      query.categories = { $all: categories };
+    }
 
     if (req.query.searchTerm) {
       query.$or = [
@@ -109,6 +113,8 @@ export const getAll = async (
     });
 
     res.status(200).json({
+      success: true,
+      message: 'Sent all the articles',
       articles,
       totalArticles,
       lastMonthArticles,
@@ -173,13 +179,11 @@ export const toggleLike = async (
     }
 
     await article.save();
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: 'The article has been toggled',
-        likesCount: article.likesCount,
-      });
+    res.status(200).json({
+      success: true,
+      message: 'The article has been toggled',
+      likesCount: article.likesCount,
+    });
   } catch (err) {
     next(err);
   }

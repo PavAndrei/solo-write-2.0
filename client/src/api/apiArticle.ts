@@ -31,16 +31,15 @@ export const createArticle = async (formData: FormData): Promise<ApiCreateArticl
 export const getAllArticles = async (
   params?: GetAllArticlesParams
 ): Promise<GetAllArticlesApiResponse> => {
-  const startIndex = params?.startIndex ? `startIndex=${params.startIndex}` : '';
-  const limit = params?.limit ? `limit=${params.limit}` : '';
-  const order = params?.order ? `order=${params.order}` : '';
-  const userId = params?.userId ? `userId=${params.userId}` : '';
-  const category = params?.category ? `category=${params.category}` : '';
-  const searchTerm = params?.searchTerm ? `searchTerm=${params.searchTerm}` : '';
+  const startIndex = params?.startIndex ? `startIndex=${params.startIndex}&` : '';
+  const limit = params?.limit ? `limit=${params.limit}&` : '';
+  const order = params?.order ? `order=${params.order}&` : '';
+  const category = params?.category ? `category=${params.category.join(',')}&` : '';
+  const searchTerm = params?.searchTerm ? `searchTerm=${params.searchTerm}&` : '';
 
   try {
     const res = await fetch(
-      `http://localhost:5000/api/article${params ? '?' : ''}${startIndex}${limit}${order}${userId}${category}${searchTerm}`
+      `http://localhost:5000/api/article${params ? '?' : ''}${startIndex}${limit}${order}${category}${searchTerm}`
     );
 
     const data = await res.json();
