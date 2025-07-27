@@ -6,6 +6,7 @@ import { ArticlesList } from '../components/ArticlesList';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { useEffect } from 'react';
 import { fetchArticles } from '../redux/articles/slice';
+import { Categories } from '../components/Categories';
 
 export const Articles = () => {
   const dispatch = useAppDispatch();
@@ -33,6 +34,7 @@ export const Articles = () => {
         <Container>
           <section className="py-[60px] md:py-[100px] xl:py-[120px]">
             <PageTitle>Articles</PageTitle>
+            <Categories />
             {items && <ArticlesList articles={items} />}
           </section>
         </Container>

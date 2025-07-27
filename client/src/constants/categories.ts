@@ -1,7 +1,7 @@
 export const CATEGORIES = [
   'Technology',
   'Health',
-  'Travel',
+  'Traveling',
   'Cooking',
   'Lifestyle',
   'Finance',
@@ -9,4 +9,5 @@ export const CATEGORIES = [
   'Art',
   'Education',
   'Entertainment',
+  'Sports',
 ];
