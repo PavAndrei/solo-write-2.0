@@ -1,20 +1,37 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { theme } from './types';
+interface ThemeState {
+  themeColor: 'light' | 'dark';
+}
 
-const initialState: theme = {
-  themeColor: 'light',
+// Функция для получения темы из localStorage
+const getThemeFromLocalStorage = (): 'light' | 'dark' => {
+  const savedTheme = localStorage.getItem('theme');
+  return savedTheme === 'dark' ? 'dark' : 'light';
+};
+
+// Инициализационное состояние с проверкой localStorage
+const initialState: ThemeState = {
+  themeColor: getThemeFromLocalStorage(),
 };
 
 const themeSlice = createSlice({
-  name: 'themeColor',
+  name: 'theme',
   initialState,
   reducers: {
     toggleTheme: (state) => {
-      state.themeColor = state.themeColor === 'light' ? 'dark' : 'light';
+      const newTheme = state.themeColor === 'light' ? 'dark' : 'light';
+      state.themeColor = newTheme;
+      // Сохраняем тему в localStorage при изменении
+      localStorage.setItem('theme', newTheme);
+    },
+    // Опционально: редьюсер для явной установки темы
+    setTheme: (state, action: { payload: 'light' | 'dark' }) => {
+      state.themeColor = action.payload;
+      localStorage.setItem('theme', action.payload);
     },
   },
 });
 
-export const { toggleTheme } = themeSlice.actions;
+export const { toggleTheme, setTheme } = themeSlice.actions;
 export default themeSlice.reducer;
