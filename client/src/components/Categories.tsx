@@ -38,9 +38,9 @@ export const Categories: FC = () => {
   }, []);
 
   return (
-    <div className="relative w-full xl:flex xl:justify-center">
+    <div className="relative w-full">
       {/* Fading gradient left */}
-      <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-white dark:from-gray-700 to-transparent z-10" />
+      <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-white dark:from-gray-700 to-transparent z-10 xl:hidden" />
 
       {/* Fading gradient right */}
       <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-white dark:from-gray-700 to-transparent z-10" />
@@ -67,7 +67,7 @@ export const Categories: FC = () => {
 
       {/* Scrollable container */}
       <div ref={scrollContainerRef} className="overflow-x-auto no-scrollbar scroll-smooth">
-        <ul className="flex gap-3 pl-14 pr-20 py-2 whitespace-nowrap">
+        <ul className="flex gap-3 pl-14 xl:pl-0 pr-20 py-2 whitespace-nowrap">
           {CATEGORIES.map((category) => (
             <li
               key={category}

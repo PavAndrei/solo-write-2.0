@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../redux/store';
 import { useEffect } from 'react';
 import { fetchArticles } from '../redux/articles/slice';
 import { Categories } from '../components/Categories';
+import { ToggleSortButton } from '../components/ToggleSortButton';
 
 export const Articles = () => {
   const dispatch = useAppDispatch();
@@ -34,8 +35,12 @@ export const Articles = () => {
         <Container>
           <section className="py-[60px] md:py-[100px] xl:py-[120px]">
             <PageTitle>Articles</PageTitle>
-            <Categories />
-            {items && <ArticlesList articles={items} />}
+
+            <div className="flex flex-col gap-3">
+              <Categories />
+              <ToggleSortButton />
+              {items && <ArticlesList articles={items} />}
+            </div>
           </section>
         </Container>
       </AnimationProvider>
