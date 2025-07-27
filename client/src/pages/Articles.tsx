@@ -9,10 +9,22 @@ import { fetchArticles } from '../redux/articles/slice';
 
 export const Articles = () => {
   const dispatch = useAppDispatch();
+
   const { items } = useAppSelector((state) => state.article);
+  const { startIndex, limit, order, category, searchTerm } = useAppSelector(
+    (state) => state.filters
+  );
 
   useEffect(() => {
-    dispatch(fetchArticles());
+    dispatch(
+      fetchArticles({
+        startIndex,
+        limit,
+        order,
+        category,
+        searchTerm,
+      })
+    );
   }, []);
 
   return (
