@@ -2,6 +2,14 @@
 
 import { Article, ArticleList, UserData } from './types';
 
+// Status
+
+export enum Status {
+  LOADING = 'loading',
+  SUCCESS = 'success',
+  ERROR = 'error',
+}
+
 // Base Api Response Type
 
 export type ApiResponse = {

@@ -4,9 +4,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import theme from './theme/slice';
 import auth from './auth/slice';
 import toast from './toast/slice';
+import article from './articles/slice';
 
 const store = configureStore({
-  reducer: { theme, auth, toast },
+  reducer: { theme, auth, toast, article },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -3,13 +3,17 @@ import { AnimationProvider } from '../components/AnimationProvider';
 import { Container } from '../components/Container';
 import { PageTitle } from '../components/PageTitle';
 import { ArticlesList } from '../components/ArticlesList';
-import { getAllArticles } from '../api/apiArticle';
-import { useFetch } from '../hooks/useFetch';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { useEffect } from 'react';
+import { fetchArticles } from '../redux/articles/slice';
 
 export const Articles = () => {
-  const { data, error, isLoading } = useFetch(getAllArticles, {});
+  const dispatch = useAppDispatch();
+  const { items } = useAppSelector((state) => state.article);
 
-  console.log(data);
+  useEffect(() => {
+    dispatch(fetchArticles());
+  }, []);
 
   return (
     <AnimatePresence>
@@ -17,7 +21,7 @@ export const Articles = () => {
         <Container>
           <section className="py-[60px] md:py-[100px] xl:py-[120px]">
             <PageTitle>Articles</PageTitle>
-            {data && <ArticlesList articles={data?.articles} />}
+            {items && <ArticlesList articles={items} />}
           </section>
         </Container>
       </AnimationProvider>
