@@ -42,8 +42,8 @@ export type ToggleArticleLikeApiResponse = ApiResponse & {
 // Api Article Query Params
 
 export type GetAllArticlesParams = {
-  startIndex?: number;
-  limit?: number;
+  startIndex: number;
+  limit: number;
   order?: string;
   categories?: string[];
   searchTerm?: string;

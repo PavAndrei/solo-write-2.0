@@ -12,6 +12,8 @@ import { SpinnerLoading } from '../components/SpinnerLoading';
 import ErrorDisplay from '../components/ErrorDisplay';
 import { Status } from '../types/apiTypes';
 import { CgSpinner } from 'react-icons/cg';
+import { Pagination } from '../components/Pagination';
+import { setStartIndex } from '../redux/filters/slice';
 
 export const Articles = () => {
   const dispatch = useAppDispatch();
@@ -22,6 +24,20 @@ export const Articles = () => {
   const { startIndex, limit, order, categories, searchTerm } = useAppSelector(
     (state) => state.filters
   );
+
+  const handleNextPageClick = () => {
+    if (startIndex + 1 + limit < totalArticles) {
+      const newStartIndex = startIndex + limit;
+      dispatch(setStartIndex(newStartIndex));
+    }
+  };
+
+  const handlePreviousPageClick = () => {
+    if (startIndex + 1 > limit) {
+      const newStartIndex = startIndex - limit;
+      dispatch(setStartIndex(newStartIndex));
+    }
+  };
 
   useEffect(() => {
     dispatch(
@@ -34,8 +50,6 @@ export const Articles = () => {
       })
     );
   }, [startIndex, limit, order, categories, searchTerm]);
-
-  console.log();
 
   return (
     <AnimatePresence>
@@ -68,6 +82,14 @@ export const Articles = () => {
                 {status === Status.LOADING && <SpinnerLoading />}
                 {status === Status.ERROR && <ErrorDisplay errorMessage="Something went wrong..." />}
                 {status === Status.SUCCESS && <ArticlesList articles={items} />}
+                {status === Status.SUCCESS && (
+                  <Pagination
+                    totalPages={Math.ceil(totalArticles / limit)}
+                    currentPage={(startIndex + limit) / limit}
+                    handleNextPage={handleNextPageClick}
+                    handlePreviousPage={handlePreviousPageClick}
+                  />
+                )}
               </div>
             )}
           </section>

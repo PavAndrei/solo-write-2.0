@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { CATEGORIES } from '../constants/categories';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '../redux/store';
-import { setCategories } from '../redux/filters/slice';
+import { setCategories, setStartIndex } from '../redux/filters/slice';
 
 export const Categories: FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -26,6 +26,7 @@ export const Categories: FC = () => {
     } else {
       dispatch(setCategories(categories?.filter((categoryItem) => categoryItem !== category)));
     }
+    dispatch(setStartIndex(0));
   };
 
   useEffect(() => {
