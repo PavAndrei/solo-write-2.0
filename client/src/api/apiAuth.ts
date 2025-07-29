@@ -10,10 +10,6 @@ export const signUp = async (formData: FormData): Promise<ApiAuthResponse> => {
       credentials: 'include',
     });
 
-    if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
-    }
-
     const data = await res.json();
 
     if (!data.success) {
@@ -23,7 +19,8 @@ export const signUp = async (formData: FormData): Promise<ApiAuthResponse> => {
     return data as ApiAuthResponse;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Network error occured';
-    throw new Error(errorMessage);
+    console.error(errorMessage);
+    return { success: false, message: errorMessage };
   }
 };
 
@@ -38,10 +35,6 @@ export const signIn = async (formData: SignInData): Promise<ApiAuthResponse> => 
       credentials: 'include',
     });
 
-    if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
-    }
-
     const data = await res.json();
 
     if (!data.success) {
@@ -51,7 +44,8 @@ export const signIn = async (formData: SignInData): Promise<ApiAuthResponse> => 
     return data as ApiAuthResponse;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Network error occured';
-    throw new Error(errorMessage);
+    console.error(errorMessage);
+    return { success: false, message: errorMessage };
   }
 };
 
@@ -61,10 +55,6 @@ export const checkAuth = async (): Promise<ApiAuthResponse> => {
       credentials: 'include',
     });
 
-    if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
-    }
-
     const data = await res.json();
 
     if (!data.success) {
@@ -74,7 +64,8 @@ export const checkAuth = async (): Promise<ApiAuthResponse> => {
     return data as ApiAuthResponse;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Network error occured';
-    throw new Error(errorMessage);
+    console.error(errorMessage);
+    return { success: false, message: errorMessage };
   }
 };
 
@@ -85,10 +76,6 @@ export const signout = async (): Promise<ApiAuthResponse> => {
       credentials: 'include',
     });
 
-    if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
-    }
-
     const data = await res.json();
 
     if (!data.success) {
@@ -98,6 +85,7 @@ export const signout = async (): Promise<ApiAuthResponse> => {
     return data as ApiAuthResponse;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Network error occured';
-    throw new Error(errorMessage);
+    console.error(errorMessage);
+    return { success: false, message: errorMessage };
   }
 };
