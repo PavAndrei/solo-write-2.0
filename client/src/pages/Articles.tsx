@@ -46,7 +46,7 @@ export const Articles = () => {
             {items && (
               <div className="flex flex-col gap-4 relative">
                 <Categories />
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-5 flex-wrap">
                   <ToggleSortButton />
                   <div className="flex gap-1 items-center">
                     lastMonthArticles:{' '}

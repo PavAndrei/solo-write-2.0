@@ -15,7 +15,7 @@ export const Categories: FC = () => {
   const scroll = (direction: 'left' | 'right') => {
     const container = scrollContainerRef.current;
     if (container) {
-      const scrollAmount = direction === 'left' ? -300 : 300;
+      const scrollAmount = direction === 'left' ? -250 : 250;
       container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
