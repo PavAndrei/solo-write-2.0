@@ -5,7 +5,7 @@ const initialState: GetAllArticlesParams = {
   startIndex: 0,
   limit: 0,
   order: 'desc',
-  category: [],
+  categories: [],
   searchTerm: '',
 };
 
@@ -22,8 +22,8 @@ const filtersSlice = createSlice({
     setOrder(state, action) {
       state.order = action.payload;
     },
-    setCategory(state, action) {
-      state.category = action.payload;
+    setCategories(state, action) {
+      state.categories = action.payload;
     },
     setSearchTerm(state, action) {
       state.searchTerm = action.payload;
@@ -31,7 +31,7 @@ const filtersSlice = createSlice({
   },
 });
 
-export const { setStartIndex, setLimit, setOrder, setCategory, setSearchTerm } =
+export const { setStartIndex, setLimit, setOrder, setCategories, setSearchTerm } =
   filtersSlice.actions;
 
 export default filtersSlice.reducer;

@@ -10,12 +10,16 @@ import { Categories } from '../components/Categories';
 import { ToggleSortButton } from '../components/ToggleSortButton';
 import { SpinnerLoading } from '../components/SpinnerLoading';
 import ErrorDisplay from '../components/ErrorDisplay';
+import { Status } from '../types/apiTypes';
+import { CgSpinner } from 'react-icons/cg';
 
 export const Articles = () => {
   const dispatch = useAppDispatch();
 
-  const { items, status } = useAppSelector((state) => state.article);
-  const { startIndex, limit, order, category, searchTerm } = useAppSelector(
+  const { items, lastMonthArticles, totalArticles, status } = useAppSelector(
+    (state) => state.article
+  );
+  const { startIndex, limit, order, categories, searchTerm } = useAppSelector(
     (state) => state.filters
   );
 
@@ -25,19 +29,13 @@ export const Articles = () => {
         startIndex,
         limit,
         order,
-        category,
+        categories,
         searchTerm,
       })
     );
-  }, []);
+  }, [startIndex, limit, order, categories, searchTerm]);
 
-  if (status === 'loading') {
-    return <SpinnerLoading />;
-  }
-
-  if (status === 'error') {
-    return <ErrorDisplay errorMessage="Something went wrong..." />;
-  }
+  console.log();
 
   return (
     <AnimatePresence>
@@ -45,16 +43,33 @@ export const Articles = () => {
         <Container>
           <section className="py-[60px] md:py-[100px] xl:py-[120px]">
             <PageTitle>Articles</PageTitle>
-
-            <div className="flex flex-col gap-3">
-              {items && (
-                <>
-                  <Categories />
+            {items && (
+              <div className="flex flex-col gap-4 relative">
+                <Categories />
+                <div className="flex items-center gap-5">
                   <ToggleSortButton />
-                  <ArticlesList articles={items} />
-                </>
-              )}
-            </div>
+                  <div className="flex gap-1 items-center">
+                    lastMonthArticles:{' '}
+                    {status === Status.LOADING ? (
+                      <CgSpinner className="animate-spin" />
+                    ) : (
+                      lastMonthArticles
+                    )}
+                  </div>
+                  <div className="flex gap-1 items-center">
+                    totalArticles:{' '}
+                    {status === Status.LOADING ? (
+                      <CgSpinner className="animate-spin" />
+                    ) : (
+                      totalArticles
+                    )}
+                  </div>
+                </div>
+                {status === Status.LOADING && <SpinnerLoading />}
+                {status === Status.ERROR && <ErrorDisplay errorMessage="Something went wrong..." />}
+                {status === Status.SUCCESS && <ArticlesList articles={items} />}
+              </div>
+            )}
           </section>
         </Container>
       </AnimationProvider>

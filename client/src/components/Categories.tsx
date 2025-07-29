@@ -2,11 +2,15 @@ import { FC, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { CATEGORIES } from '../constants/categories';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { setCategories } from '../redux/filters/slice';
 
 export const Categories: FC = () => {
-  const [activeCategory, setActiveCategory] = useState<string[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [showArrows, setShowArrows] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const { categories } = useAppSelector((state) => state.filters);
 
   const scroll = (direction: 'left' | 'right') => {
     const container = scrollContainerRef.current;
@@ -17,9 +21,11 @@ export const Categories: FC = () => {
   };
 
   const handleCategoryClick = (category: string) => {
-    setActiveCategory((prev) =>
-      prev.includes(category) ? prev.filter((cat) => cat !== category) : [...prev, category]
-    );
+    if (categories?.indexOf(category) === -1) {
+      dispatch(setCategories([...categories, category]));
+    } else {
+      dispatch(setCategories(categories?.filter((categoryItem) => categoryItem !== category)));
+    }
   };
 
   useEffect(() => {
@@ -37,15 +43,14 @@ export const Categories: FC = () => {
     return () => window.removeEventListener('resize', checkScroll);
   }, []);
 
+  console.log(categories);
+
   return (
     <div className="relative w-full">
-      {/* Fading gradient left */}
       <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-white dark:from-gray-700 to-transparent z-10 xl:hidden" />
 
-      {/* Fading gradient right */}
       <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-white dark:from-gray-700 to-transparent z-10" />
 
-      {/* Left Arrow */}
       {showArrows && (
         <button
           className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-2 bg-white dark:bg-black shadow-md rounded-full transition hover:scale-105 active:scale-95"
@@ -55,7 +60,6 @@ export const Categories: FC = () => {
         </button>
       )}
 
-      {/* Right Arrow */}
       {showArrows && (
         <button
           className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-2 bg-white dark:bg-black shadow-md rounded-full transition hover:scale-105 active:scale-95"
@@ -65,19 +69,15 @@ export const Categories: FC = () => {
         </button>
       )}
 
-      {/* Scrollable container */}
-      <div ref={scrollContainerRef} className="overflow-x-auto no-scrollbar scroll-smooth">
+      <div ref={scrollContainerRef} className="overflow-y-auto scrollbar-hide scrollbar-none">
         <ul className="flex gap-3 pl-14 xl:pl-0 pr-20 py-2 whitespace-nowrap">
           {CATEGORIES.map((category) => (
             <li
               key={category}
               className={clsx(
-                'cursor-pointer px-4 py-1 rounded-full border text-sm transition-all duration-200',
-                'active:scale-95',
-                activeCategory.includes(category)
-                  ? 'bg-black text-white dark:bg-white dark:text-black border-transparent'
-                  : 'bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-white border-transparent',
-                'md:hover:bg-gray-300 md:dark:hover:bg-gray-700'
+                'cursor-pointer px-4 py-1 rounded-full text-sm transition-all duration-200',
+                'active:scale-95 text-md font-semibold bg-gray-300 hover:bg-gray-400 dark:bg-gray-800 dark:hover:bg-gray-900 border dark:border border-gray-300 dark:border-gray-900',
+                categories?.includes(category) && 'border-gray-900 dark:border-white'
               )}
               onClick={() => handleCategoryClick(category)}
             >

@@ -36,7 +36,7 @@ export const getAllArticles = async (
   const startIndex = params?.startIndex ? `startIndex=${params.startIndex}&` : '';
   const limit = params?.limit ? `limit=${params.limit}&` : '';
   const order = params?.order ? `order=${params.order}&` : '';
-  const category = params?.category ? `category=${params.category.join(',')}&` : '';
+  const category = params?.categories ? `category=${params.categories.join(',')}&` : '';
   const searchTerm = params?.searchTerm ? `searchTerm=${params.searchTerm}&` : '';
 
   try {

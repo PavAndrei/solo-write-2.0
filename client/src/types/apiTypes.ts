@@ -45,6 +45,6 @@ export type GetAllArticlesParams = {
   startIndex?: number;
   limit?: number;
   order?: string;
-  category?: string[];
+  categories?: string[];
   searchTerm?: string;
 };
