@@ -5,10 +5,14 @@ import { ArticleList } from '../../types/types';
 
 export const fetchArticles = createAsyncThunk(
   'articles/all',
-  async (params?: GetAllArticlesParams) => {
-    const data = await getAllArticles(params);
-
-    return data;
+  async (params: GetAllArticlesParams, { rejectWithValue }) => {
+    try {
+      return await getAllArticles(params);
+    } catch (err) {
+      return rejectWithValue({
+        message: err instanceof Error ? err.message : 'Unknown error',
+      });
+    }
   }
 );
 

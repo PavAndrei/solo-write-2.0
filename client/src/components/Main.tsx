@@ -5,5 +5,5 @@ interface MainProps {
 }
 
 export const Main: FC<MainProps> = ({ children }) => {
-  return <div className="relative">{children}</div>;
+  return <div className="relative grow flex flex-col">{children}</div>;
 };

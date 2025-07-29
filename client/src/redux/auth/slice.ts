@@ -1,10 +1,8 @@
-// src/store/authSlice.ts
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { checkAuth, signIn, signUp, signout } from '../../api/apiAuth';
 import { SignInData } from '../../utils/authSchemas';
 
 interface UserData {
-  // Переименуем UserState в UserData для ясности
   userId: string;
   email: string;
   role: string;
@@ -25,7 +23,6 @@ const initialState: AuthState = {
   error: null,
 };
 
-// Обновляем типы для Thunk-функций
 export const loginUser = createAsyncThunk<
   UserData | null,
   Omit<SignInData, 'repeatPassword' | 'terms' | 'file' | 'username'>
@@ -78,7 +75,6 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Обработка состояний для всех Thunk-функций
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;

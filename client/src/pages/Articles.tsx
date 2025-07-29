@@ -8,11 +8,13 @@ import { useEffect } from 'react';
 import { fetchArticles } from '../redux/articles/slice';
 import { Categories } from '../components/Categories';
 import { ToggleSortButton } from '../components/ToggleSortButton';
+import { SpinnerLoading } from '../components/SpinnerLoading';
+import ErrorDisplay from '../components/ErrorDisplay';
 
 export const Articles = () => {
   const dispatch = useAppDispatch();
 
-  const { items } = useAppSelector((state) => state.article);
+  const { items, status } = useAppSelector((state) => state.article);
   const { startIndex, limit, order, category, searchTerm } = useAppSelector(
     (state) => state.filters
   );
@@ -29,6 +31,14 @@ export const Articles = () => {
     );
   }, []);
 
+  if (status === 'loading') {
+    return <SpinnerLoading />;
+  }
+
+  if (status === 'error') {
+    return <ErrorDisplay errorMessage="Something went wrong..." />;
+  }
+
   return (
     <AnimatePresence>
       <AnimationProvider>
@@ -37,9 +47,13 @@ export const Articles = () => {
             <PageTitle>Articles</PageTitle>
 
             <div className="flex flex-col gap-3">
-              <Categories />
-              <ToggleSortButton />
-              {items && <ArticlesList articles={items} />}
+              {items && (
+                <>
+                  <Categories />
+                  <ToggleSortButton />
+                  <ArticlesList articles={items} />
+                </>
+              )}
             </div>
           </section>
         </Container>

@@ -4,13 +4,17 @@ import { SignInData } from '../utils/authSchemas';
 
 export const signUp = async (formData: FormData): Promise<ApiAuthResponse> => {
   try {
-    const response = await fetch(`${BASE_API_URL}/auth/signup`, {
+    const res = await fetch(`${BASE_API_URL}/auth/signup`, {
       method: 'POST',
       body: formData as FormData,
       credentials: 'include',
     });
 
-    const data = await response.json();
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+    const data = await res.json();
 
     if (!data.success) {
       throw new Error(data.message);
@@ -18,16 +22,14 @@ export const signUp = async (formData: FormData): Promise<ApiAuthResponse> => {
 
     return data as ApiAuthResponse;
   } catch (err) {
-    return {
-      success: false,
-      message: err instanceof Error ? err.message : 'Unknown error',
-    };
+    const errorMessage = err instanceof Error ? err.message : 'Network error occured';
+    throw new Error(errorMessage);
   }
 };
 
 export const signIn = async (formData: SignInData): Promise<ApiAuthResponse> => {
   try {
-    const response = await fetch(`${BASE_API_URL}/auth/signin`, {
+    const res = await fetch(`${BASE_API_URL}/auth/signin`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,7 +38,11 @@ export const signIn = async (formData: SignInData): Promise<ApiAuthResponse> => 
       credentials: 'include',
     });
 
-    const data = await response.json();
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+    const data = await res.json();
 
     if (!data.success) {
       throw new Error(data.message);
@@ -44,19 +50,22 @@ export const signIn = async (formData: SignInData): Promise<ApiAuthResponse> => 
 
     return data as ApiAuthResponse;
   } catch (err) {
-    return {
-      success: false,
-      message: err instanceof Error ? err.message : 'Unknown error',
-    };
+    const errorMessage = err instanceof Error ? err.message : 'Network error occured';
+    throw new Error(errorMessage);
   }
 };
 
 export const checkAuth = async (): Promise<ApiAuthResponse> => {
   try {
-    const response = await fetch(`${BASE_API_URL}/auth/me`, {
+    const res = await fetch(`${BASE_API_URL}/auth/me`, {
       credentials: 'include',
     });
-    const data = await response.json();
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+    const data = await res.json();
 
     if (!data.success) {
       throw new Error(data.message);
@@ -64,20 +73,23 @@ export const checkAuth = async (): Promise<ApiAuthResponse> => {
 
     return data as ApiAuthResponse;
   } catch (err) {
-    return {
-      success: false,
-      message: err instanceof Error ? err.message : 'Auth check failed',
-    };
+    const errorMessage = err instanceof Error ? err.message : 'Network error occured';
+    throw new Error(errorMessage);
   }
 };
 
 export const signout = async (): Promise<ApiAuthResponse> => {
   try {
-    const response = await fetch(`${BASE_API_URL}/auth/signout`, {
+    const res = await fetch(`${BASE_API_URL}/auth/signout`, {
       method: 'POST',
       credentials: 'include',
     });
-    const data = await response.json();
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+    const data = await res.json();
 
     if (!data.success) {
       throw new Error(data.message);
@@ -85,9 +97,7 @@ export const signout = async (): Promise<ApiAuthResponse> => {
 
     return data as ApiAuthResponse;
   } catch (err) {
-    return {
-      success: false,
-      message: err instanceof Error ? err.message : 'Logout failed',
-    };
+    const errorMessage = err instanceof Error ? err.message : 'Network error occured';
+    throw new Error(errorMessage);
   }
 };

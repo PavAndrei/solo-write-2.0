@@ -7,13 +7,17 @@ import {
 
 export const createArticle = async (formData: FormData): Promise<ApiCreateArticleResponse> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/article`, {
+    const res = await fetch(`http://localhost:5000/api/article`, {
       method: 'POST',
       body: formData as FormData,
       credentials: 'include',
     });
 
-    const data = await response.json();
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+    const data = await res.json();
 
     if (!data.success) {
       throw new Error(data.message);
@@ -21,10 +25,8 @@ export const createArticle = async (formData: FormData): Promise<ApiCreateArticl
 
     return data as ApiCreateArticleResponse;
   } catch (err) {
-    return {
-      success: false,
-      message: err instanceof Error ? err.message : 'Unknown error',
-    };
+    const errorMessage = err instanceof Error ? err.message : 'Network error occured';
+    throw new Error(errorMessage);
   }
 };
 
@@ -42,6 +44,10 @@ export const getAllArticles = async (
       `http://localhost:5000/api/article${params ? '?' : ''}${startIndex}${limit}${order}${category}${searchTerm}`
     );
 
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
     const data = await res.json();
 
     if (!data.success) {
@@ -50,21 +56,23 @@ export const getAllArticles = async (
 
     return data as GetAllArticlesApiResponse;
   } catch (err) {
-    return {
-      success: false,
-      message: err instanceof Error ? err.message : 'Unknown error',
-    };
+    const errorMessage = err instanceof Error ? err.message : 'Network error occured';
+    throw new Error(errorMessage);
   }
 };
 
 export const toggleArticleLike = async (id: string): Promise<ToggleArticleLikeApiResponse> => {
   try {
-    const response = await fetch(`http://localhost:5000/api/article/${id}/like`, {
+    const res = await fetch(`http://localhost:5000/api/article/${id}/like`, {
       method: 'POST',
       credentials: 'include',
     });
 
-    const data = await response.json();
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
+
+    const data = await res.json();
 
     if (!data.success) {
       throw new Error(data.message);
@@ -72,9 +80,7 @@ export const toggleArticleLike = async (id: string): Promise<ToggleArticleLikeAp
 
     return data as ToggleArticleLikeApiResponse;
   } catch (err) {
-    return {
-      success: false,
-      message: err instanceof Error ? err.message : 'Unknown error',
-    };
+    const errorMessage = err instanceof Error ? err.message : 'Network error occured';
+    throw new Error(errorMessage);
   }
 };
