@@ -44,8 +44,6 @@ export const Categories: FC = () => {
     return () => window.removeEventListener('resize', checkScroll);
   }, []);
 
-  console.log(categories);
-
   return (
     <div className="relative w-full">
       <div className="pointer-events-none absolute left-0 top-0 h-full w-10 bg-gradient-to-r from-white dark:from-gray-700 to-transparent z-10 xl:hidden" />

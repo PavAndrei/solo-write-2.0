@@ -39,6 +39,10 @@ export const Articles = () => {
     }
   };
 
+  const handleSelectedPageClick = (num: number) => {
+    dispatch(setStartIndex(num * limit));
+  };
+
   useEffect(() => {
     dispatch(
       fetchArticles({
@@ -88,6 +92,7 @@ export const Articles = () => {
                     currentPage={(startIndex + limit) / limit}
                     handleNextPage={handleNextPageClick}
                     handlePreviousPage={handlePreviousPageClick}
+                    handlePageClick={handleSelectedPageClick}
                   />
                 )}
               </div>

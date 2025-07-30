@@ -3,7 +3,7 @@ import { GetAllArticlesParams } from '../../types/apiTypes';
 
 const initialState: GetAllArticlesParams = {
   startIndex: 0,
-  limit: 12,
+  limit: 5,
   order: 'desc',
   categories: [],
   searchTerm: '',

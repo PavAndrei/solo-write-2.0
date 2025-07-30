@@ -17,17 +17,19 @@ export const Pagination: FC<PaginationProps> = ({
   handlePreviousPage,
   handlePageClick,
 }) => {
-  console.log(currentPage);
-
   return (
     <div className="mx-auto w-full flex items-center justify-center gap-3 pt-5">
-      <button onClick={handlePreviousPage} className=" cursor-pointer p-2 min-w-9">
+      <button
+        disabled={currentPage === 1}
+        onClick={handlePreviousPage}
+        className="cursor-pointer p-2 min-w-9 disabled:opacity-45"
+      >
         <GrCaretPrevious className="text-xl" />
       </button>
       {[...Array(totalPages)].map((_, index) => {
         return (
           <button
-            onClick={() => handlePageClick(index + 1)}
+            onClick={() => handlePageClick(index)}
             disabled={currentPage === index + 1}
             key={index}
             className={clsx(
@@ -39,7 +41,11 @@ export const Pagination: FC<PaginationProps> = ({
           </button>
         );
       })}
-      <button onClick={handleNextPage} className="cursor-pointer min-w-9 p-2">
+      <button
+        disabled={currentPage === totalPages}
+        onClick={handleNextPage}
+        className="cursor-pointer min-w-9 p-2 disabled:opacity-45"
+      >
         <GrCaretNext className="text-xl" />
       </button>
     </div>
