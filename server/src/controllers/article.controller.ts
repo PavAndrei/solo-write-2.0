@@ -93,7 +93,7 @@ export const getAll = async (
     }
 
     const articles = await Article.find(query)
-      .sort({ updatedAt: sortDirection })
+      .sort({ createdAt: sortDirection })
       .skip(startIndex)
       .limit(limit)
       .populate('user', 'username email');

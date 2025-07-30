@@ -4,7 +4,7 @@ import { Container } from '../components/Container';
 import { PageTitle } from '../components/PageTitle';
 import { ArticlesList } from '../components/ArticlesList';
 import { useAppDispatch, useAppSelector } from '../redux/store';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchArticles } from '../redux/articles/slice';
 import { Categories } from '../components/Categories';
 import { ToggleSortButton } from '../components/ToggleSortButton';
@@ -13,10 +13,16 @@ import ErrorDisplay from '../components/ErrorDisplay';
 import { Status } from '../types/apiTypes';
 import { CgSpinner } from 'react-icons/cg';
 import { Pagination } from '../components/Pagination';
-import { setStartIndex } from '../redux/filters/slice';
+import { setCategories, setOrder, setSearchTerm, setStartIndex } from '../redux/filters/slice';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export const Articles = () => {
   const dispatch = useAppDispatch();
+
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const { items, lastMonthArticles, totalArticles, status } = useAppSelector(
     (state) => state.article
@@ -44,16 +50,62 @@ export const Articles = () => {
   };
 
   useEffect(() => {
-    dispatch(
-      fetchArticles({
-        startIndex,
-        limit,
-        order,
-        categories,
-        searchTerm,
-      })
-    );
+    const params = Object.fromEntries(searchParams.entries());
+
+    if (params.startIndex && +params?.startIndex !== 0) {
+      dispatch(setStartIndex(+params.startIndex));
+    }
+
+    if (params?.order) {
+      dispatch(setOrder(params.order));
+    }
+
+    if (params?.categories?.length > 0) {
+      dispatch(setCategories(params.categories.split(',')));
+    }
+
+    if (params?.searchTerm) {
+      dispatch(setSearchTerm(params.searchTerm));
+    }
+
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isInitialized) {
+      setIsInitialized(true);
+      return;
+    }
+
+    const query = new URLSearchParams();
+
+    if (startIndex !== 0) query.set('startIndex', String(startIndex));
+    if (order === 'asc') query.set('order', order);
+    if (categories && categories?.length > 0) query.set('categories', String(categories));
+    if (searchTerm) query.set('searchTerm', searchTerm);
+
+    if (query) {
+      navigate(`/articles?${query.toString()}`);
+    }
   }, [startIndex, limit, order, categories, searchTerm]);
+
+  useEffect(() => {
+    if (isInitialized) {
+      dispatch(
+        fetchArticles({
+          startIndex,
+          limit,
+          order,
+          categories,
+          searchTerm,
+        })
+      );
+    }
+  }, [startIndex, limit, order, categories, searchTerm, isInitialized]);
+
+  const isSuccess = status === Status.SUCCESS;
+  const isLoading = status === Status.LOADING;
+  const isError = status === Status.ERROR;
 
   return (
     <AnimatePresence>
@@ -68,25 +120,17 @@ export const Articles = () => {
                   <ToggleSortButton />
                   <div className="flex gap-1 items-center">
                     lastMonthArticles:{' '}
-                    {status === Status.LOADING ? (
-                      <CgSpinner className="animate-spin" />
-                    ) : (
-                      lastMonthArticles
-                    )}
+                    {isLoading ? <CgSpinner className="animate-spin" /> : lastMonthArticles}
                   </div>
                   <div className="flex gap-1 items-center">
                     totalArticles:{' '}
-                    {status === Status.LOADING ? (
-                      <CgSpinner className="animate-spin" />
-                    ) : (
-                      totalArticles
-                    )}
+                    {isLoading ? <CgSpinner className="animate-spin" /> : totalArticles}
                   </div>
                 </div>
-                {status === Status.LOADING && <SpinnerLoading />}
-                {status === Status.ERROR && <ErrorDisplay errorMessage="Something went wrong..." />}
-                {status === Status.SUCCESS && <ArticlesList articles={items} />}
-                {status === Status.SUCCESS && (
+                {isLoading && <SpinnerLoading />}
+                {isError && <ErrorDisplay errorMessage="Something went wrong..." />}
+                {isSuccess && <ArticlesList articles={items} />}
+                {isSuccess && totalArticles > limit && (
                   <Pagination
                     totalPages={Math.ceil(totalArticles / limit)}
                     currentPage={(startIndex + limit) / limit}
