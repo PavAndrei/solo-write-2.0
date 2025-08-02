@@ -58,14 +58,8 @@ export const ArticleCard: FC<ArticleCardProps> = ({
         alt={title}
       />
 
-      <div className="flex gap-2 justify-between cursor-pointer">
-        <div className="flex gap-2 items-center">
-          <BiLike className="text-xl" /> <span>{likesCount}</span>
-        </div>
-
-        <div className="flex gap-2 items-center cursor-pointer">
-          <GrView className="text-xl" /> <span>{viewsCount}</span>
-        </div>
+      <div className="flex gap-2 items-center cursor-pointer">
+        <GrView className="text-xl" /> <span>{viewsCount}</span>
       </div>
 
       <Button onClickFunc={() => navigate(slug)}>Read More</Button>

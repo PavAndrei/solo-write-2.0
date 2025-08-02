@@ -1,8 +1,19 @@
+import clsx from 'clsx';
+import { FC } from 'react';
 import { FaSpinner } from 'react-icons/fa';
 
-export const SpinnerLoading = () => {
+interface SpinnerLoadingProps {
+  className?: string;
+}
+
+export const SpinnerLoading: FC<SpinnerLoadingProps> = ({ className }) => {
   return (
-    <div className="fixed top-1/3 inset-0 flex items-center justify-center bg-opacity-50 z-50">
+    <div
+      className={clsx(
+        'fixed inset-0 flex items-center justify-center bg-opacity-50 z-50',
+        className
+      )}
+    >
       <FaSpinner className="animate-spin text-4xl" />
     </div>
   );

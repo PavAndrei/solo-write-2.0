@@ -34,7 +34,7 @@ export const Pagination: FC<PaginationProps> = ({
             key={index}
             className={clsx(
               `text-lg cursor-pointer p-2 border rounded-lg min-w-9 text-center bg-gray-300 dark:bg-gray-700 transition-all duration-300 ease-in-out`,
-              currentPage === index + 1 && 'bg-gray-400'
+              currentPage === index + 1 && 'bg-gray-400 dark:bg-gray-800'
             )}
           >
             {index + 1}

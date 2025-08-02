@@ -68,15 +68,7 @@ export const toggleArticleLike = async (id: string): Promise<ToggleArticleLikeAp
       credentials: 'include',
     });
 
-    if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
-    }
-
     const data = await res.json();
-
-    if (!data.success) {
-      throw new Error(data.message);
-    }
 
     return data as ToggleArticleLikeApiResponse;
   } catch (err) {

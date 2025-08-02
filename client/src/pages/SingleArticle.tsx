@@ -7,9 +7,19 @@ import { Author } from '../types/types';
 import { Button } from '../components/Button';
 import { IoIosArrowBack } from 'react-icons/io';
 import { ImagesSlider } from '../components/ImagesSlider';
-import { BiLike } from 'react-icons/bi';
 import { GrView } from 'react-icons/gr';
 import { toggleArticleLike } from '../api/apiArticle';
+import { LikeButton } from '../components/LikeButton';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { addToast } from '../redux/toast/slice';
+import {
+  clearCurrentArticle,
+  fetchArticle,
+  updateArticleLikes,
+} from '../redux/singleArticle/slice';
+import clsx from 'clsx';
+import { SpinnerLoading } from '../components/SpinnerLoading';
+import ErrorDisplay from '../components/ErrorDisplay';
 
 type Article = {
   _id: string;
@@ -20,30 +30,76 @@ type Article = {
   images: string[];
   likesCount: number;
   viewsCount: number;
+  likedBy: string[];
 };
 
 export const SingleArticle = () => {
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
+  const { currentArticle, loading, error } = useAppSelector((state) => state.singleArticle);
   const { slug } = useParams();
   const navigate = useNavigate();
 
-  const [article, setArticle] = useState<Article>();
-
   useEffect(() => {
-    const fetchOneArticle = async () => {
-      const res = await fetch(`http://localhost:5000/api/article/${slug}`);
-      const data = await res.json();
-      setArticle(data.data);
+    if (slug) {
+      dispatch(fetchArticle(slug));
+    }
+    return () => {
+      dispatch(clearCurrentArticle());
     };
+  }, [slug, dispatch]);
 
-    fetchOneArticle();
-  }, []);
+  const toggleLike = async (id: string) => {
+    if (!user) {
+      dispatch(addToast({ color: 'error', text: 'You need to login to like articles' }));
+      navigate('/signin');
+      return;
+    }
 
-  const toggleLike = async (id?: string) => {
-    if (id) {
+    if (!currentArticle) return;
+
+    // Оптимистичное обновление
+    const isCurrentlyLiked = currentArticle.likedBy.includes(user.userId);
+    const updatedLikesCount = isCurrentlyLiked
+      ? currentArticle.likesCount - 1
+      : currentArticle.likesCount + 1;
+    const updatedLikedBy = isCurrentlyLiked
+      ? currentArticle.likedBy.filter((userId) => userId !== user.userId)
+      : [...currentArticle.likedBy, user.userId];
+
+    dispatch(
+      updateArticleLikes({
+        likesCount: updatedLikesCount,
+        likedBy: updatedLikedBy,
+      })
+    );
+
+    try {
       const res = await toggleArticleLike(id);
-      console.log(res);
+      if (!res.success) {
+        // Откатываем изменения при ошибке
+        dispatch(
+          updateArticleLikes({
+            likesCount: currentArticle.likesCount,
+            likedBy: currentArticle.likedBy,
+          })
+        );
+        dispatch(addToast({ color: 'error', text: res.message }));
+      }
+    } catch (error) {
+      // Откатываем изменения при ошибке сети
+      dispatch(
+        updateArticleLikes({
+          likesCount: currentArticle.likesCount,
+          likedBy: currentArticle.likedBy,
+        })
+      );
+      dispatch(addToast({ color: 'error', text: 'Failed to update like' }));
     }
   };
+
+  if (loading) return <SpinnerLoading className="absolute top-0" />;
+  if (error) return <ErrorDisplay errorMessage={error} hasArticlesButton />;
 
   return (
     <AnimatePresence>
@@ -54,42 +110,54 @@ export const SingleArticle = () => {
               <IoIosArrowBack /> Back
             </Button>
 
-            <div
-              dangerouslySetInnerHTML={article && { __html: article.content }}
-              className="article-container flex flex-col gap-5"
-            />
+            {currentArticle && (
+              <div className="flex flex-col gap-20 pt-20">
+                <article
+                  dangerouslySetInnerHTML={currentArticle && { __html: currentArticle.content }}
+                  className="article-container flex flex-col gap-5"
+                />
 
-            {article?.images && article?.images.length > 1 ? (
-              <ImagesSlider slides={article?.images} />
-            ) : (
-              <img
-                className="w-1/2 self-center object-cover max-h-[500px] rounded-lg"
-                src={article?.images[0]}
-                alt=""
-              />
+                {currentArticle?.images && currentArticle.images.length > 1 ? (
+                  <ImagesSlider slides={currentArticle.images} />
+                ) : (
+                  <img
+                    className="w-1/2 self-center object-cover max-h-[500px] rounded-lg"
+                    src={currentArticle?.images[0]}
+                    alt=""
+                  />
+                )}
+
+                <div className="flex justify-between items-center pb-5">
+                  <div className="flex gap-5">
+                    <LikeButton
+                      articleId={currentArticle._id}
+                      initialLikesCount={currentArticle.likesCount}
+                      toggleLike={toggleLike}
+                      isLiked={user ? currentArticle.likedBy.includes(user.userId) : false}
+                    />
+
+                    <div
+                      className={clsx(
+                        'flex gap-2 items-center text-2xl',
+                        currentArticle.viewsCount === 0 && 'text-gray-500'
+                      )}
+                    >
+                      <GrView /> <span>{currentArticle.viewsCount}</span>
+                    </div>
+                  </div>
+
+                  <div className="text-right italic text-md">
+                    written by{' '}
+                    <Link
+                      to={`/profile/${currentArticle.user._id}`}
+                      className="font-bold underline capitalize cursor-pointer"
+                    >
+                      {currentArticle?.user.username}
+                    </Link>
+                  </div>
+                </div>
+              </div>
             )}
-
-            <div className="mt-10 xl:mt-5">
-              <div className="flex gap-5 cursor-pointer">
-                <div onClick={() => toggleLike(article?._id)} className="flex gap-2 items-center">
-                  <BiLike className="text-2xl" /> <span>{article?.likesCount}</span>
-                </div>
-
-                <div className="flex gap-2 items-center cursor-pointer">
-                  <GrView className="text-2xl" /> <span>{article?.viewsCount}</span>
-                </div>
-              </div>
-
-              <div className="text-right italic text-md">
-                written by{' '}
-                <Link
-                  to={`/profile/${article?.user._id}`}
-                  className="font-bold underline capitalize cursor-pointer"
-                >
-                  {article?.user.username}
-                </Link>
-              </div>
-            </div>
 
             <Button onClickFunc={() => navigate(-1)} className="max-w-25">
               <IoIosArrowBack /> Back

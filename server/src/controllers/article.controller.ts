@@ -169,11 +169,9 @@ export const toggleLike = async (
     const likeIndex = article.likedBy.indexOf(userId);
 
     if (likeIndex === -1) {
-      // Добавляем лайк
       article.likedBy.push(userId);
       article.likesCount += 1;
     } else {
-      // Убираем лайк
       article.likedBy.splice(likeIndex, 1);
       article.likesCount -= 1;
     }

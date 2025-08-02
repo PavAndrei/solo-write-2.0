@@ -127,7 +127,7 @@ export const Articles = () => {
                     {isLoading ? <CgSpinner className="animate-spin" /> : totalArticles}
                   </div>
                 </div>
-                {isLoading && <SpinnerLoading />}
+                {isLoading && <SpinnerLoading className="top-1/3" />}
                 {isError && <ErrorDisplay errorMessage="Something went wrong..." />}
                 {isSuccess && <ArticlesList articles={items} />}
                 {isSuccess && totalArticles > limit && (

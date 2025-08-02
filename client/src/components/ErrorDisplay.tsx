@@ -1,12 +1,14 @@
 import React from 'react';
 import { FaExclamationCircle, FaRedo } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { LuNotepadText } from 'react-icons/lu';
 
 interface ErrorDisplayProps {
   errorMessage: string;
   onClickFunc?: () => void;
   className?: string;
   onClickFuncText?: string;
+  hasArticlesButton?: boolean;
 }
 
 const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
@@ -14,17 +16,18 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   onClickFunc,
   onClickFuncText,
   className = '',
+  hasArticlesButton = false,
 }) => {
   const navigate = useNavigate();
 
   return (
     <div
-      className={`flex flex-col grow-1 items-center justify-center p-6 rounded-lg text-center ${className}`}
+      className={`flex flex-col gap-5  grow-1 items-center justify-center px-6 rounded-lg text-center ${className}`}
     >
-      <FaExclamationCircle className="text-red-500 text-5xl mb-4 animate-pulse" />
+      <FaExclamationCircle className="text-red-500 text-5xl animate-pulse" />
 
-      <h3 className="text-xl font-semibold text-red-500 mb-2">Error occured!</h3>
-      <p className="mb-4">{errorMessage}</p>
+      <h3 className="text-xl font-semibold text-red-500">Error occured!</h3>
+      <p>{errorMessage}</p>
 
       {onClickFunc && (
         <button
@@ -37,10 +40,19 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
 
       <button
         onClick={() => navigate(0)}
-        className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-700 rounded transition duration-300 ease-in-out"
+        className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-700 rounded transition duration-300 ease-in-out text-lg"
       >
         <FaRedo /> Reload the page
       </button>
+
+      {hasArticlesButton && (
+        <button
+          onClick={() => navigate('/articles')}
+          className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-700 rounded transition duration-300 ease-in-out text-lg"
+        >
+          <LuNotepadText /> To the articles list
+        </button>
+      )}
     </div>
   );
 };
