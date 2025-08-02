@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import { authRouter } from './routes/auth.route';
 import { globalErrorHandler } from './middlewares/handleErrors';
 import { articleRouter } from './routes/article.route';
+import { commentRouter } from './routes/comment.route';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRouter);
 app.use('/api/article', articleRouter);
+app.use('/api/comment', commentRouter);
 
 if (!MONGO_URI) {
   console.error('❌ MONGO_CONNECTION_STRING is missing');
