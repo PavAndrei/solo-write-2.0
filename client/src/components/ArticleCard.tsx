@@ -1,9 +1,13 @@
 import { FC } from 'react';
 import { Button } from './Button';
-import { BiLike } from 'react-icons/bi';
 import { GrView } from 'react-icons/gr';
 import { useNavigate } from 'react-router-dom';
 import { Author } from '../types/types';
+import { LikeButton } from './LikeButton';
+import clsx from 'clsx';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { useToggleLike } from '../hooks/useToggleLike';
+import { updateCardLikes } from '../redux/articles/slice';
 
 interface ArticleCardProps {
   _id: string;
@@ -11,6 +15,7 @@ interface ArticleCardProps {
   description: string;
   categories: string[];
   likesCount: number;
+  likedBy: string[];
   images: string[];
   user: Author;
   updatedAt: string;
@@ -19,10 +24,12 @@ interface ArticleCardProps {
 }
 
 export const ArticleCard: FC<ArticleCardProps> = ({
+  _id,
   title,
   description,
   categories,
   likesCount,
+  likedBy,
   user,
   images,
   updatedAt,
@@ -32,6 +39,15 @@ export const ArticleCard: FC<ArticleCardProps> = ({
   const date = new Date(updatedAt);
 
   const navigate = useNavigate();
+
+  const dispatch = useAppDispatch();
+  const { user: author } = useAppSelector((state) => state.auth);
+
+  const { toggleLike } = useToggleLike();
+
+  const handleToggleLike = async (id: string) => {
+    await toggleLike(id, likesCount, likedBy, (payload) => dispatch(updateCardLikes(payload)));
+  };
 
   return (
     <li className="flex flex-col justify-between gap-4 border rounded-md p-2 pt-4">
@@ -58,8 +74,16 @@ export const ArticleCard: FC<ArticleCardProps> = ({
         alt={title}
       />
 
-      <div className="flex gap-2 items-center cursor-pointer">
-        <GrView className="text-xl" /> <span>{viewsCount}</span>
+      <div className="flex gap-2 items-center justify-between">
+        <LikeButton
+          articleId={_id}
+          initialLikesCount={likesCount}
+          isLiked={author ? likedBy.includes(author?.userId) : false}
+          toggleLike={handleToggleLike}
+        />
+        <span className={clsx('flex gap-2 items-center', viewsCount === 0 && 'text-gray-400')}>
+          <GrView className="text-xl" /> {viewsCount}
+        </span>
       </div>
 
       <Button onClickFunc={() => navigate(slug)}>Read More</Button>

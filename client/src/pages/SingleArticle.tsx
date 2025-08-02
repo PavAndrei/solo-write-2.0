@@ -20,6 +20,7 @@ import {
 import clsx from 'clsx';
 import { SpinnerLoading } from '../components/SpinnerLoading';
 import ErrorDisplay from '../components/ErrorDisplay';
+import { useToggleLike } from '../hooks/useToggleLike';
 
 type Article = {
   _id: string;
@@ -40,6 +41,8 @@ export const SingleArticle = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
 
+  const { toggleLike } = useToggleLike();
+
   useEffect(() => {
     if (slug) {
       dispatch(fetchArticle(slug));
@@ -49,54 +52,61 @@ export const SingleArticle = () => {
     };
   }, [slug, dispatch]);
 
-  const toggleLike = async (id: string) => {
-    if (!user) {
-      dispatch(addToast({ color: 'error', text: 'You need to login to like articles' }));
-      navigate('/signin');
-      return;
-    }
-
+  const handleToggleLike = async (id: string) => {
     if (!currentArticle) return;
-
-    // Оптимистичное обновление
-    const isCurrentlyLiked = currentArticle.likedBy.includes(user.userId);
-    const updatedLikesCount = isCurrentlyLiked
-      ? currentArticle.likesCount - 1
-      : currentArticle.likesCount + 1;
-    const updatedLikedBy = isCurrentlyLiked
-      ? currentArticle.likedBy.filter((userId) => userId !== user.userId)
-      : [...currentArticle.likedBy, user.userId];
-
-    dispatch(
-      updateArticleLikes({
-        likesCount: updatedLikesCount,
-        likedBy: updatedLikedBy,
-      })
+    await toggleLike(id, currentArticle.likesCount, currentArticle.likedBy, (payload) =>
+      dispatch(updateArticleLikes(payload))
     );
-
-    try {
-      const res = await toggleArticleLike(id);
-      if (!res.success) {
-        // Откатываем изменения при ошибке
-        dispatch(
-          updateArticleLikes({
-            likesCount: currentArticle.likesCount,
-            likedBy: currentArticle.likedBy,
-          })
-        );
-        dispatch(addToast({ color: 'error', text: res.message }));
-      }
-    } catch (error) {
-      // Откатываем изменения при ошибке сети
-      dispatch(
-        updateArticleLikes({
-          likesCount: currentArticle.likesCount,
-          likedBy: currentArticle.likedBy,
-        })
-      );
-      dispatch(addToast({ color: 'error', text: 'Failed to update like' }));
-    }
   };
+
+  // const toggleLike = async (id: string) => {
+  //   if (!user) {
+  //     dispatch(addToast({ color: 'error', text: 'You need to login to like articles' }));
+  //     navigate('/signin');
+  //     return;
+  //   }
+
+  //   if (!currentArticle) return;
+
+  //   // Оптимистичное обновление
+  //   const isCurrentlyLiked = currentArticle.likedBy.includes(user.userId);
+  //   const updatedLikesCount = isCurrentlyLiked
+  //     ? currentArticle.likesCount - 1
+  //     : currentArticle.likesCount + 1;
+  //   const updatedLikedBy = isCurrentlyLiked
+  //     ? currentArticle.likedBy.filter((userId) => userId !== user.userId)
+  //     : [...currentArticle.likedBy, user.userId];
+
+  //   dispatch(
+  //     updateArticleLikes({
+  //       likesCount: updatedLikesCount,
+  //       likedBy: updatedLikedBy,
+  //     })
+  //   );
+
+  //   try {
+  //     const res = await toggleArticleLike(id);
+  //     if (!res.success) {
+  //       // Откатываем изменения при ошибке
+  //       dispatch(
+  //         updateArticleLikes({
+  //           likesCount: currentArticle.likesCount,
+  //           likedBy: currentArticle.likedBy,
+  //         })
+  //       );
+  //       dispatch(addToast({ color: 'error', text: res.message }));
+  //     }
+  //   } catch (error) {
+  //     // Откатываем изменения при ошибке сети
+  //     dispatch(
+  //       updateArticleLikes({
+  //         likesCount: currentArticle.likesCount,
+  //         likedBy: currentArticle.likedBy,
+  //       })
+  //     );
+  //     dispatch(addToast({ color: 'error', text: 'Failed to update like' }));
+  //   }
+  // };
 
   if (loading) return <SpinnerLoading className="absolute top-0" />;
   if (error) return <ErrorDisplay errorMessage={error} hasArticlesButton />;
@@ -132,7 +142,7 @@ export const SingleArticle = () => {
                     <LikeButton
                       articleId={currentArticle._id}
                       initialLikesCount={currentArticle.likesCount}
-                      toggleLike={toggleLike}
+                      toggleLike={handleToggleLike}
                       isLiked={user ? currentArticle.likedBy.includes(user.userId) : false}
                     />
 

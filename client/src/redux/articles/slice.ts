@@ -33,7 +33,16 @@ const initialState: ArticleSliceState = {
 const articleSlice = createSlice({
   name: 'article',
   initialState,
-  reducers: {},
+  reducers: {
+    updateCardLikes: (state, action) => {
+      const { articleId, likesCount, likedBy } = action.payload;
+      const article = state.items.find((article) => article._id === articleId);
+      if (article) {
+        article.likesCount = likesCount;
+        article.likedBy = likedBy;
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchArticles.pending, (state) => {
       state.status = Status.LOADING;
@@ -55,5 +64,7 @@ const articleSlice = createSlice({
     });
   },
 });
+
+export const { updateCardLikes } = articleSlice.actions;
 
 export default articleSlice.reducer;
