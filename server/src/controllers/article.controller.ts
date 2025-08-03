@@ -142,7 +142,11 @@ export const getOneArticle = async (
       return next(errorHandler(404, 'Article is not found'));
     }
 
-    res.status(200).json({ success: true, data: article });
+    res.status(200).json({
+      success: true,
+      message: 'The article has been sent to the client',
+      data: article,
+    });
   } catch (err) {
     next(err);
   }
@@ -179,7 +183,7 @@ export const toggleLike = async (
     await article.save();
     res.status(200).json({
       success: true,
-      message: 'The article has been toggled',
+      message: 'The article like has been toggled',
       likesCount: article.likesCount,
     });
   } catch (err) {
