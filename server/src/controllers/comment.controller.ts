@@ -43,7 +43,9 @@ export const getArticleComments = async (
   next: NextFunction
 ) => {
   try {
-    const comments = await Comment.find({ postId: req.params.postId }).sort({
+    const comments = await Comment.find({
+      articleId: req.params.id,
+    }).sort({
       createdAt: -1,
     });
 

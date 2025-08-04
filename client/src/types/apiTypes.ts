@@ -1,6 +1,6 @@
 // Api Response Types
 
-import { Article, ArticleList, UserData } from './types';
+import { Article, ArticleList, Comment, UserData } from './types';
 
 // Status
 
@@ -37,6 +37,16 @@ export type GetAllArticlesApiResponse = ApiResponse & {
 
 export type ToggleArticleLikeApiResponse = ApiResponse & {
   likesCount?: number;
+};
+
+//Api Comment Response Types
+
+export type CreateCommentApiResponse = ApiAuthResponse & {
+  data?: Comment;
+};
+
+export type GetCommentsApiResponse = ApiAuthResponse & {
+  data?: Comment[];
 };
 
 // Api Article Query Params

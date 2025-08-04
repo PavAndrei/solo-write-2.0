@@ -30,4 +30,16 @@ export type UserData = {
   verified: boolean;
 };
 
+export type Comment = {
+  content: string;
+  articleId: string;
+  userId: string;
+  likes: string[];
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  numberOfLikes: number;
+};
+
 export type ArticleList = Article[];
