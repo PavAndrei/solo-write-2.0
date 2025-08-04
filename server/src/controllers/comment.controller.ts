@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { errorHandler } from '../middlewares/handleErrors';
 import mongoose from 'mongoose';
 import Comment from '../models/Comment.model';
+import User from '../models/User.model';
 
 export const create = async (
   req: Request,
@@ -209,6 +210,65 @@ export const toggleLike = async (
         numberOfLikes: updatedComment?.likes.length || 0,
         isLiked: action === 'added',
       },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteComment = async (
+  // req: RequestWithUserId,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id: commentId } = req.params;
+    const userId = req.userId; // userId из middleware аутентификации
+
+    // Проверяем валидность ID комментария
+    // if (!Types.ObjectId.isValid(commentId)) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: 'Invalid comment ID format',
+    //   });
+    // }
+
+    // Находим комментарий
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        message: 'Comment not found',
+      });
+    }
+
+    // Находим пользователя, который пытается удалить
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Проверяем права доступа
+    const isAuthor = comment.userId.toString() === userId.toString();
+    const isAdmin = user.role === 'admin';
+
+    if (!isAuthor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not authorized to delete this comment',
+      });
+    }
+
+    // Удаляем комментарий
+    await Comment.findByIdAndDelete(commentId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Comment deleted successfully',
     });
   } catch (err) {
     next(err);
