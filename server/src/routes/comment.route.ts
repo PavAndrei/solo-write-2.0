@@ -5,6 +5,7 @@ import {
   getAll,
   toggleLike,
   deleteComment,
+  updateComment,
 } from '../controllers/comment.controller';
 import { verifyToken } from '../middlewares/verifyToken';
 import { validate } from '../middlewares/validate';
@@ -17,3 +18,4 @@ commentRouter.get('/:id', getArticleComments);
 commentRouter.get('/', getAll);
 commentRouter.patch('/:id/like', verifyToken, toggleLike);
 commentRouter.delete('/:id/', verifyToken, deleteComment);
+commentRouter.patch('/:id', verifyToken, updateComment);

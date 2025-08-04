@@ -274,3 +274,76 @@ export const deleteComment = async (
     next(err);
   }
 };
+
+export const updateComment = async (
+  // req: RequestWithUserId,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id: commentId } = req.params;
+    const { content } = req.body;
+    const userId = req.userId;
+
+    // Валидация ID комментария
+    // if (!Types.ObjectId.isValid(commentId)) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: 'Invalid comment ID format',
+    //   });
+    // }
+
+    // Проверка наличия контента
+    if (!content || typeof content !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'Content is required and must be a string',
+      });
+    }
+
+    // Находим комментарий
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({
+        success: false,
+        message: 'Comment not found',
+      });
+    }
+
+    // Находим пользователя
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    // Проверка прав доступа
+    const isAuthor = comment.userId.toString() === userId.toString();
+    const isAdmin = user.role === 'admin';
+
+    if (!isAuthor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not authorized to edit this comment',
+      });
+    }
+
+    // Обновляем комментарий
+    const updatedComment = await Comment.findByIdAndUpdate(
+      commentId,
+      { content },
+      { new: true, runValidators: true }
+    ).populate('userId', 'username avatarUrl');
+
+    res.status(200).json({
+      success: true,
+      message: 'Comment updated successfully',
+      data: updatedComment,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
