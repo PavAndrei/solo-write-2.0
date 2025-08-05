@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { useToggleLike } from '../hooks/useToggleLike';
 import { updateCardLikes } from '../redux/articles/slice';
+import { displayLocalTime } from '../utils/displayLocalTime';
 
 interface ArticleCardProps {
   _id: string;
@@ -18,6 +19,7 @@ interface ArticleCardProps {
   likedBy: string[];
   images: string[];
   user: Author;
+  createdAt: string;
   updatedAt: string;
   viewsCount: number;
   slug: string;
@@ -32,12 +34,10 @@ export const ArticleCard: FC<ArticleCardProps> = ({
   likedBy,
   user,
   images,
-  updatedAt,
+  createdAt,
   viewsCount,
   slug,
 }) => {
-  const date = new Date(updatedAt);
-
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
@@ -53,7 +53,7 @@ export const ArticleCard: FC<ArticleCardProps> = ({
     <li className="flex flex-col justify-between gap-4 border rounded-md p-2 pt-4">
       <div className="flex flex-col gap-1.5 justify-between min-h-25">
         <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold">{title}</h2>
-        <span className="text-sm">{date?.toLocaleString().replace(',', ' ')}</span>
+        <span className="text-sm">{displayLocalTime(createdAt)}</span>
       </div>
       <ul className="flex gap-2 flex-wrap">
         {categories.map((category, i) => (
@@ -76,7 +76,7 @@ export const ArticleCard: FC<ArticleCardProps> = ({
 
       <div className="flex gap-2 items-center justify-between">
         <LikeButton
-          articleId={_id}
+          id={_id}
           initialLikesCount={likesCount}
           isLiked={author ? likedBy.includes(author?.userId) : false}
           toggleLike={handleToggleLike}

@@ -9,11 +9,11 @@ export const create = async (
   res: Response,
   next: NextFunction
 ) => {
-  const userId = req.userId;
+  const userData = req.userId;
 
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    return next(errorHandler(403, 'You are not allowed to create a comment'));
-  }
+  // if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+  //   return next(errorHandler(403, 'You are not allowed to create a comment'));
+  // }
 
   const { content, articleId } = req.body;
 
@@ -21,16 +21,20 @@ export const create = async (
     const newComment = new Comment({
       content,
       articleId,
-      userId,
+      userData,
       likes: [],
     });
 
     await newComment.save();
 
+    const populatedComment = await Comment.findById(newComment._id)
+      .populate('userData', 'username avatarUrl')
+      .lean();
+
     res.status(200).json({
       success: true,
       message: 'Comment has been added',
-      data: newComment,
+      data: populatedComment,
     });
   } catch (err) {
     next(err);
@@ -45,9 +49,11 @@ export const getArticleComments = async (
   try {
     const comments = await Comment.find({
       articleId: req.params.id,
-    }).sort({
-      createdAt: -1,
-    });
+    })
+      .populate('userData', 'username avatarUrl')
+      .sort({
+        createdAt: -1,
+      });
 
     res.status(200).json({
       success: true,

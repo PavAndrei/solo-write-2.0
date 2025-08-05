@@ -19,7 +19,7 @@ import clsx from 'clsx';
 import { SpinnerLoading } from '../components/SpinnerLoading';
 import ErrorDisplay from '../components/ErrorDisplay';
 import { useToggleLike } from '../hooks/useToggleLike';
-import { CommentsSection } from '../components/CommentsSection';
+import { CommentSection } from '../components/CommentSection';
 
 type Article = {
   _id: string;
@@ -95,7 +95,7 @@ export const SingleArticle = () => {
                   <div className="flex justify-between items-center pb-5">
                     <div className="flex gap-5">
                       <LikeButton
-                        articleId={currentArticle._id}
+                        id={currentArticle._id}
                         initialLikesCount={currentArticle.likesCount}
                         toggleLike={handleToggleLike}
                         isLiked={user ? currentArticle.likedBy.includes(user.userId) : false}
@@ -123,7 +123,7 @@ export const SingleArticle = () => {
                   </div>
                 </div>
               </section>
-              <CommentsSection articleId={currentArticle._id} />
+              <CommentSection articleId={currentArticle._id} />
             </>
           )}
         </Container>

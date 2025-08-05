@@ -4,7 +4,7 @@ import { BiLike } from 'react-icons/bi';
 import { motion } from 'framer-motion';
 
 interface LikeButtonProps {
-  articleId: string;
+  id: string;
   initialLikesCount: number;
   isLiked: boolean;
   className?: string;
@@ -12,7 +12,7 @@ interface LikeButtonProps {
 }
 
 export const LikeButton: FC<LikeButtonProps> = ({
-  articleId,
+  id,
   initialLikesCount,
   isLiked,
   toggleLike,
@@ -24,7 +24,7 @@ export const LikeButton: FC<LikeButtonProps> = ({
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
       type="button"
-      onClick={() => toggleLike(articleId)}
+      onClick={() => toggleLike(id)}
       className={clsx(
         'flex gap-2 items-center text-2xl transition-colors cursor-pointer',
         isLiked ? 'text-red-400' : 'hover:text-red-400',

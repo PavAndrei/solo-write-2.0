@@ -11,7 +11,7 @@ const commentSchema = new mongoose.Schema(
       ref: 'Article',
       required: true,
     },
-    userId: {
+    userData: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: true,
@@ -25,8 +25,20 @@ const commentSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        delete ret.id;
+        return ret;
+      },
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        delete ret.id;
+        return ret;
+      },
+    },
     id: false,
   }
 );

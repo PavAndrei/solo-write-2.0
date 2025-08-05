@@ -57,3 +57,29 @@ export const getArticleComments = async (articleId: string): Promise<GetComments
     return { success: false, message: errorMessage };
   }
 };
+
+export const toggleCommentLike = async (commentId: string) => {
+  try {
+    const res = await fetch(`http://localhost:5000/api/comment/${commentId}/like`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    });
+
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+
+    const data = await res.json();
+
+    if (!data.success) {
+      throw new Error(data.message);
+    }
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Network error occured';
+    console.error(errorMessage);
+    return { success: false, message: errorMessage };
+  }
+};

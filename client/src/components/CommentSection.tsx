@@ -7,11 +7,11 @@ import { addToast } from '../redux/toast/slice';
 import { CommentList } from './CommentList';
 import { Comment } from '../types/types';
 
-interface CommentsSectionProps {
+interface CommentSectionProps {
   articleId: string;
 }
 
-export const CommentsSection: FC<CommentsSectionProps> = ({ articleId }) => {
+export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
   const [formData, setFormData] = useState('');
   const [comments, setComments] = useState<Comment[] | undefined>([]);
 
