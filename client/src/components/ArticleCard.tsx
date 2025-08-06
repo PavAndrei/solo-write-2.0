@@ -46,7 +46,20 @@ export const ArticleCard: FC<ArticleCardProps> = ({
   const { toggleLike } = useToggleLike();
 
   const handleToggleLike = async (id: string) => {
-    await toggleLike(id, likesCount, likedBy, (payload) => dispatch(updateCardLikes(payload)));
+    await toggleLike(
+      'article', // Указываем тип сущности
+      id,
+      likesCount,
+      likedBy,
+      (payload) =>
+        dispatch(
+          updateCardLikes({
+            articleId: payload.entityId, // Переименовываем entityId → articleId
+            likesCount: payload.likesCount,
+            likedBy: payload.likedBy,
+          })
+        )
+    );
   };
 
   return (

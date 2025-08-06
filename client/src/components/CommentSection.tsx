@@ -1,11 +1,11 @@
 import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react';
 import { Button } from './Button';
 import { CustomTextarea } from './CustomTextarea';
-import { createComment, getArticleComments } from '../api/apiComments';
-import { useAppDispatch } from '../redux/store';
+import { createComment } from '../api/apiComments';
+import { useAppDispatch, useAppSelector } from '../redux/store';
 import { addToast } from '../redux/toast/slice';
 import { CommentList } from './CommentList';
-import { Comment } from '../types/types';
+import { clearCurrentComments, fetchArticleComments } from '../redux/comment/slice';
 
 interface CommentSectionProps {
   articleId: string;
@@ -13,9 +13,9 @@ interface CommentSectionProps {
 
 export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
   const [formData, setFormData] = useState('');
-  const [comments, setComments] = useState<Comment[] | undefined>([]);
 
   const dispatch = useAppDispatch();
+  const { items } = useAppSelector((state) => state.comment);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setFormData(e.target.value);
@@ -26,7 +26,6 @@ export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
 
     try {
       const result = await createComment({ articleId, content: formData });
-      console.log(result);
       if (result.success) {
         dispatch(addToast({ color: 'error', text: 'The comment has been created' }));
       } else {
@@ -41,15 +40,15 @@ export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
   };
 
   useEffect(() => {
-    const getComments = async () => {
-      const comments = await getArticleComments(articleId);
-      if (comments) {
-        setComments(comments.data);
-      }
+    if (articleId) {
+      dispatch(fetchArticleComments(articleId));
+    }
+    return () => {
+      dispatch(clearCurrentComments());
     };
+  }, [articleId, dispatch]);
 
-    getComments();
-  }, [articleId]);
+  console.log(items);
 
   return (
     <section className="flex flex-col gap-4">
@@ -63,7 +62,7 @@ export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
         <Button className="md:max-w-[100px] ml-auto md:mr-[12%] mr-0" type="submit">
           Send
         </Button>
-        <CommentList comments={comments} />
+        <CommentList comments={items} />
       </form>
     </section>
   );

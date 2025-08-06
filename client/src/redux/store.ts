@@ -7,9 +7,10 @@ import toast from './toast/slice';
 import article from './articles/slice';
 import filters from './filters/slice';
 import singleArticle from './singleArticle/slice';
+import comment from './comment/slice';
 
 const store = configureStore({
-  reducer: { theme, auth, toast, article, filters, singleArticle },
+  reducer: { theme, auth, toast, article, filters, singleArticle, comment },
 });
 
 export type RootState = ReturnType<typeof store.getState>;

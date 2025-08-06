@@ -52,9 +52,9 @@ export const SingleArticle = () => {
     };
   }, [slug, dispatch]);
 
-  const handleToggleLike = async (id: string) => {
+  const handleArticleLike = async (id: string) => {
     if (!currentArticle) return;
-    await toggleLike(id, currentArticle.likesCount, currentArticle.likedBy, (payload) =>
+    await toggleLike('article', id, currentArticle.likesCount, currentArticle.likedBy, (payload) =>
       dispatch(updateArticleLikes(payload))
     );
   };
@@ -97,7 +97,7 @@ export const SingleArticle = () => {
                       <LikeButton
                         id={currentArticle._id}
                         initialLikesCount={currentArticle.likesCount}
-                        toggleLike={handleToggleLike}
+                        toggleLike={handleArticleLike}
                         isLiked={user ? currentArticle.likedBy.includes(user.userId) : false}
                       />
 

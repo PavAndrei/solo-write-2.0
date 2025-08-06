@@ -49,4 +49,6 @@ export type Comment = {
   numberOfLikes: number;
 };
 
+export type CommentList = Comment[];
+
 export type ArticleList = Article[];

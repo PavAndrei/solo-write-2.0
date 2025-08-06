@@ -11,8 +11,6 @@ export const CommentList: FC<CommentListProps> = ({ comments }) => {
     return <div>Comments haven't been added to this article yet.</div>;
   }
 
-  console.log(comments);
-
   return (
     <ul className="flex flex-col gap-3.5 py-4">
       {comments.map((comment) => (

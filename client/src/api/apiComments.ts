@@ -68,15 +68,13 @@ export const toggleCommentLike = async (commentId: string) => {
       credentials: 'include',
     });
 
-    if (!res.ok) {
-      throw new Error(res.statusText);
-    }
-
     const data = await res.json();
 
-    if (!data.success) {
-      throw new Error(data.message);
+    if (!res.ok) {
+      throw new Error(data.message || res.statusText);
     }
+
+    return data;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Network error occured';
     console.error(errorMessage);

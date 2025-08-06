@@ -3,6 +3,9 @@ import { useAppDispatch, useAppSelector } from '../redux/store';
 import { addToast } from '../redux/toast/slice';
 import { useNavigate } from 'react-router-dom';
 import { toggleArticleLike } from '../api/apiArticle';
+import { toggleCommentLike } from '../api/apiComments';
+
+type LikeableEntity = 'article' | 'comment';
 
 export const useToggleLike = () => {
   const dispatch = useAppDispatch();
@@ -11,17 +14,24 @@ export const useToggleLike = () => {
 
   const toggleLike = useCallback(
     async (
-      articleId: string,
+      entityType: LikeableEntity,
+      entityId: string,
       currentLikesCount: number,
       currentLikedBy: string[],
-      updateFn: (payload: { articleId: string; likesCount: number; likedBy: string[] }) => void
+      updateFn: (payload: { entityId: string; likesCount: number; likedBy: string[] }) => void
     ) => {
       if (!user) {
-        dispatch(addToast({ color: 'error', text: 'You need to login to like articles' }));
+        dispatch(
+          addToast({
+            color: 'error',
+            text: 'You need to login to like content',
+          })
+        );
         navigate('/signin');
         return { success: false };
       }
 
+      // Оптимистичное обновление
       const isCurrentlyLiked = currentLikedBy.includes(user.userId);
       const updatedLikesCount = isCurrentlyLiked ? currentLikesCount - 1 : currentLikesCount + 1;
       const updatedLikedBy = isCurrentlyLiked
@@ -29,29 +39,40 @@ export const useToggleLike = () => {
         : [...currentLikedBy, user.userId];
 
       updateFn({
-        articleId,
+        entityId,
         likesCount: updatedLikesCount,
         likedBy: updatedLikedBy,
       });
 
       try {
-        const res = await toggleArticleLike(articleId);
-        if (!res.success) {
+        const res =
+          entityType === 'article'
+            ? await toggleArticleLike(entityId)
+            : await toggleCommentLike(entityId);
+
+        if (!res?.success) {
+          // Откатываем изменения при ошибке
           updateFn({
-            articleId,
+            entityId,
             likesCount: currentLikesCount,
             likedBy: currentLikedBy,
           });
-          dispatch(addToast({ color: 'error', text: res.message }));
+          dispatch(addToast({ color: 'error', text: res?.message }));
         }
         return res;
       } catch (error) {
+        // Откатываем изменения при ошибке сети
         updateFn({
-          articleId,
+          entityId,
           likesCount: currentLikesCount,
           likedBy: currentLikedBy,
         });
-        dispatch(addToast({ color: 'error', text: 'Failed to update like' }));
+        dispatch(
+          addToast({
+            color: 'error',
+            text: 'Failed to update like',
+          })
+        );
         return { success: false, message: 'Network error' };
       }
     },

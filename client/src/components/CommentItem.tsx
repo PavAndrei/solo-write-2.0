@@ -3,8 +3,9 @@ import { Comment } from '../types/types';
 import { FaUser } from 'react-icons/fa';
 import { displayLocalTime } from '../utils/displayLocalTime';
 import { LikeButton } from './LikeButton';
-import { toggleCommentLike } from '../api/apiComments';
-import { useAppSelector } from '../redux/store';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { useToggleLike } from '../hooks/useToggleLike';
+import { updateCommentLike } from '../redux/comment/slice';
 
 export const CommentItem: FC<Comment> = ({
   _id,
@@ -15,10 +16,13 @@ export const CommentItem: FC<Comment> = ({
   likes,
 }) => {
   const { user } = useAppSelector((state) => state.auth);
+  const { toggleLike } = useToggleLike();
+  const dispatch = useAppDispatch();
 
   const handleCommentLike = async (id: string) => {
-    const res = await toggleCommentLike(id);
-    console.log(res);
+    await toggleLike('comment', id, numberOfLikes, likes, (payload) =>
+      dispatch(updateCommentLike(payload))
+    );
   };
 
   return (
