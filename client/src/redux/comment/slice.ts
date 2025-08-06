@@ -47,11 +47,9 @@ const commentSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(fetchArticleComments.pending, (state, action) => {
-      console.log('Fetching comments for article:', action.meta.arg);
       state.status = Status.LOADING;
     });
     builder.addCase(fetchArticleComments.fulfilled, (state, action) => {
-      // Объединяем старые и новые комментарии, избегая дубликатов
       const newComments = action.payload.data.filter(
         (newComment) => !state.items.some((item) => item._id === newComment._id)
       );

@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Button } from './Button';
 import { CustomTextarea } from './CustomTextarea';
 import { createComment } from '../api/apiComments';
@@ -7,6 +7,8 @@ import { addToast } from '../redux/toast/slice';
 import { CommentList } from './CommentList';
 import { addNewComment, clearCurrentComments, fetchArticleComments } from '../redux/comment/slice';
 import { useForm } from 'react-hook-form';
+import { Status } from '../types/apiTypes';
+import { FaSpinner } from 'react-icons/fa';
 
 interface CommentSectionProps {
   articleId: string;
@@ -18,7 +20,8 @@ type CommentValues = {
 
 export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
   const dispatch = useAppDispatch();
-  const { items } = useAppSelector((state) => state.comment);
+  const { items, status } = useAppSelector((state) => state.comment);
+  const [isCommentUploading, setIsCommentUploading] = useState(false);
 
   const {
     register,
@@ -33,11 +36,13 @@ export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
 
   const onSubmit = async (data: CommentValues) => {
     try {
+      setIsCommentUploading(true);
       const result = await createComment({ articleId, content: data.content });
       if (result.success) {
         dispatch(addToast({ color: 'success', text: 'Comment has been created' }));
         reset();
         dispatch(addNewComment(result.data));
+        setIsCommentUploading(false);
         setTimeout(() => dispatch(fetchArticleComments(articleId)), 5000);
       } else {
         dispatch(addToast({ color: 'error', text: result.message }));
@@ -73,9 +78,18 @@ export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
         />
 
         {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content.message}</p>}
-        <Button className="md:max-w-[100px] ml-auto md:mr-[12%] mr-0" type="submit">
+        <Button
+          disabled={isCommentUploading}
+          className="md:max-w-[100px] ml-auto md:mr-[12%] mr-0"
+          type="submit"
+        >
           Send
         </Button>
+        <div>
+          {isCommentUploading && (
+            <FaSpinner className="animate-spin text-2xl text-center mx-auto" />
+          )}
+        </div>
       </form>
       <CommentList comments={items} />
     </section>

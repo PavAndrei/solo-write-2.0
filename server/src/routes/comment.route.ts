@@ -17,5 +17,5 @@ commentRouter.post('/create', verifyToken, validate(commentSchema), create);
 commentRouter.get('/:id', getArticleComments);
 commentRouter.get('/', getAll);
 commentRouter.patch('/:id/like', verifyToken, toggleLike);
-commentRouter.delete('/:id/', verifyToken, deleteComment);
+commentRouter.delete('/:id', verifyToken, deleteComment);
 commentRouter.patch('/:id', verifyToken, updateComment);

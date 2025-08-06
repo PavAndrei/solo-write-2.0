@@ -6,6 +6,7 @@ import { LikeButton } from './LikeButton';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { useToggleLike } from '../hooks/useToggleLike';
 import { updateCommentLike } from '../redux/comment/slice';
+import { deleteComment } from '../api/apiComments';
 
 export const CommentItem: FC<Comment> = ({
   _id,
@@ -24,6 +25,14 @@ export const CommentItem: FC<Comment> = ({
       dispatch(updateCommentLike(payload))
     );
   };
+
+  const handleDeleteComment = async (id: string) => {
+    const result = await deleteComment(id);
+
+    console.log(result);
+  };
+
+  const isAuthor = userData ? userData._id === user?.userId : null;
 
   return (
     <li className="flex gap-3 items-center border border-gray-300 p-2 rounded-md">
@@ -45,13 +54,20 @@ export const CommentItem: FC<Comment> = ({
           <span className="text-xs opacity-50">{displayLocalTime(createdAt)}</span>
         </div>
         <p>{content}</p>
-        <LikeButton
-          className="text-lg"
-          toggleLike={handleCommentLike}
-          id={_id}
-          initialLikesCount={numberOfLikes}
-          isLiked={user ? likes.includes(user?.userId) : false}
-        />
+        <div className="flex justify-between">
+          <LikeButton
+            className="text-lg"
+            toggleLike={handleCommentLike}
+            id={_id}
+            initialLikesCount={numberOfLikes}
+            isLiked={user ? likes.includes(user?.userId) : false}
+          />
+          {isAuthor && (
+            <button className="border" type="button" onClick={() => handleDeleteComment(_id)}>
+              Delete
+            </button>
+          )}
+        </div>
       </div>
     </li>
   );

@@ -261,7 +261,7 @@ export const deleteComment = async (
     }
 
     // Проверяем права доступа
-    const isAuthor = comment.userId.toString() === userId.toString();
+    const isAuthor = comment.userData?._id.toString() === userId.toString();
     const isAdmin = user.role === 'admin';
 
     if (!isAuthor && !isAdmin) {

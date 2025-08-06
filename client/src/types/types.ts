@@ -33,7 +33,7 @@ export type UserData = {
 type CommentUserData = {
   articleCount: number;
   avatarUrl?: string;
-  id: string;
+  _id: string;
   username: string;
 };
 

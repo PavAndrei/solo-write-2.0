@@ -37,7 +37,6 @@ export const createComment = async (
 };
 
 export const getArticleComments = async (articleId: string): Promise<GetCommentsApiResponse> => {
-  console.log('render comments');
   try {
     const res = await fetch(`http://localhost:5000/api/comment/${articleId}`);
 
@@ -66,6 +65,27 @@ export const toggleCommentLike = async (commentId: string) => {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || res.statusText);
+    }
+
+    return data;
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Network error occured';
+    console.error(errorMessage);
+    return { success: false, message: errorMessage };
+  }
+};
+
+export const deleteComment = async (commentId: string) => {
+  try {
+    const res = await fetch(`http://localhost:5000/api/comment/${commentId}`, {
+      method: 'Delete',
       credentials: 'include',
     });
 
