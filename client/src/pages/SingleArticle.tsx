@@ -21,18 +21,6 @@ import ErrorDisplay from '../components/ErrorDisplay';
 import { useToggleLike } from '../hooks/useToggleLike';
 import { CommentSection } from '../components/CommentSection';
 
-type Article = {
-  _id: string;
-  title: string;
-  description: string;
-  content: string | TrustedHTML;
-  user: Author;
-  images: string[];
-  likesCount: number;
-  viewsCount: number;
-  likedBy: string[];
-};
-
 export const SingleArticle = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);

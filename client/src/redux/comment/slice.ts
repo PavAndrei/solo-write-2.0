@@ -4,7 +4,7 @@ import { CommentList } from '../../types/types';
 import { getArticleComments } from '../../api/apiComments';
 
 export const fetchArticleComments = createAsyncThunk(
-  'articles/all',
+  'comments/singleArticleComments',
   async (articleId: string, { rejectWithValue }) => {
     try {
       return await getArticleComments(articleId);
@@ -46,7 +46,8 @@ const commentSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchArticleComments.pending, (state) => {
+    builder.addCase(fetchArticleComments.pending, (state, action) => {
+      console.log('Fetching comments for article:', action.meta.arg);
       state.status = Status.LOADING;
     });
     builder.addCase(fetchArticleComments.fulfilled, (state, action) => {
