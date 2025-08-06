@@ -41,22 +41,27 @@ const commentSlice = createSlice({
         comment.likes = likedBy;
       }
     },
+    addNewComment: (state, action) => {
+      state.items.unshift(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchArticleComments.pending, (state) => {
       state.status = Status.LOADING;
-      state.items = [];
     });
     builder.addCase(fetchArticleComments.fulfilled, (state, action) => {
-      state.items = action.payload.data;
+      // Объединяем старые и новые комментарии, избегая дубликатов
+      const newComments = action.payload.data.filter(
+        (newComment) => !state.items.some((item) => item._id === newComment._id)
+      );
+      state.items = [...newComments, ...state.items];
       state.status = Status.SUCCESS;
     });
     builder.addCase(fetchArticleComments.rejected, (state) => {
       state.status = Status.ERROR;
-      state.items = [];
     });
   },
 });
 
-export const { clearCurrentComments, updateCommentLike } = commentSlice.actions;
+export const { clearCurrentComments, updateCommentLike, addNewComment } = commentSlice.actions;
 export default commentSlice.reducer;

@@ -1,41 +1,49 @@
-import { ChangeEvent, FC, FormEvent, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
 import { Button } from './Button';
 import { CustomTextarea } from './CustomTextarea';
 import { createComment } from '../api/apiComments';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { addToast } from '../redux/toast/slice';
 import { CommentList } from './CommentList';
-import { clearCurrentComments, fetchArticleComments } from '../redux/comment/slice';
+import { addNewComment, clearCurrentComments, fetchArticleComments } from '../redux/comment/slice';
+import { useForm } from 'react-hook-form';
 
 interface CommentSectionProps {
   articleId: string;
 }
 
-export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
-  const [formData, setFormData] = useState('');
+type CommentValues = {
+  content: string;
+};
 
+export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
   const dispatch = useAppDispatch();
   const { items } = useAppSelector((state) => state.comment);
 
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setFormData(e.target.value);
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<CommentValues>({
+    defaultValues: {
+      content: '',
+    },
+  });
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const onSubmit = async (data: CommentValues) => {
     try {
-      const result = await createComment({ articleId, content: formData });
+      const result = await createComment({ articleId, content: data.content });
       if (result.success) {
-        dispatch(addToast({ color: 'error', text: 'The comment has been created' }));
+        dispatch(addToast({ color: 'success', text: 'Comment has been created' }));
+        reset();
+        dispatch(addNewComment(result.data));
+        setTimeout(() => dispatch(fetchArticleComments(articleId)), 5000);
       } else {
         dispatch(addToast({ color: 'error', text: result.message }));
       }
-
-      setFormData('');
     } catch (err) {
-      dispatch(addToast({ color: 'error', text: err }));
-      console.error('Creating a comment failed:', err);
+      dispatch(addToast({ color: 'error', text: 'Failed to create comment' }));
     }
   };
 
@@ -48,8 +56,6 @@ export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
     };
   }, [articleId, dispatch]);
 
-  console.log(items);
-
   return (
     <section className="flex flex-col gap-4">
       <h3 className="text-center text-2xl md:text-3xl lg:text-4xl font-bold">Comments Below</h3>
@@ -57,13 +63,21 @@ export const CommentSection: FC<CommentSectionProps> = ({ articleId }) => {
         Share your interesting thoughts about this article with us. <br /> We are looking forward to
         reading your comment.
       </p>
-      <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-        <CustomTextarea value={formData} onChange={handleChange} />
+      <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
+        <CustomTextarea
+          {...register('content', {
+            required: 'Comment content is required',
+            validate: (value) => value.trim() !== '' || 'Comment cannot be empty',
+          })}
+          error={errors.content?.message}
+        />
+
+        {errors.content && <p className="text-red-500 text-sm mt-1">{errors.content.message}</p>}
         <Button className="md:max-w-[100px] ml-auto md:mr-[12%] mr-0" type="submit">
           Send
         </Button>
-        <CommentList comments={items} />
       </form>
+      <CommentList comments={items} />
     </section>
   );
 };

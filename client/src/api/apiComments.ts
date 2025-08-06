@@ -37,6 +37,7 @@ export const createComment = async (
 };
 
 export const getArticleComments = async (articleId: string): Promise<GetCommentsApiResponse> => {
+  console.log('render comments');
   try {
     const res = await fetch(`http://localhost:5000/api/comment/${articleId}`);
 
