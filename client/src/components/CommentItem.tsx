@@ -5,8 +5,13 @@ import { displayLocalTime } from '../utils/displayLocalTime';
 import { LikeButton } from './LikeButton';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { useToggleLike } from '../hooks/useToggleLike';
-import { updateCommentLike } from '../redux/comment/slice';
-import { deleteComment } from '../api/apiComments';
+import {
+  deleteCommentThunk,
+  optimisticDeleteComment,
+  updateCommentLike,
+} from '../redux/comment/slice';
+import { addToast } from '../redux/toast/slice';
+import { Button } from './Button';
 
 export const CommentItem: FC<Comment> = ({
   _id,
@@ -27,12 +32,21 @@ export const CommentItem: FC<Comment> = ({
   };
 
   const handleDeleteComment = async (id: string) => {
-    const result = await deleteComment(id);
-
-    console.log(result);
+    if (!window.confirm('Are you sure you want to delete this comment?')) {
+      return;
+    }
+    dispatch(optimisticDeleteComment(id));
+    try {
+      await dispatch(deleteCommentThunk(id)).unwrap();
+      dispatch(addToast({ color: 'success', text: 'Comment deleted' }));
+    } catch (err) {
+      console.error('Failed to delete comment:', err);
+      dispatch(addToast({ color: 'error', text: 'Failed to delete comment' }));
+    }
   };
 
   const isAuthor = userData ? userData._id === user?.userId : null;
+  const isAdmin = user?.role === 'admin';
 
   return (
     <li className="flex gap-3 items-center border border-gray-300 p-2 rounded-md">
@@ -62,10 +76,10 @@ export const CommentItem: FC<Comment> = ({
             initialLikesCount={numberOfLikes}
             isLiked={user ? likes.includes(user?.userId) : false}
           />
-          {isAuthor && (
-            <button className="border" type="button" onClick={() => handleDeleteComment(_id)}>
+          {(isAuthor || isAdmin) && (
+            <Button type="button" onClickFunc={() => handleDeleteComment(_id)}>
               Delete
-            </button>
+            </Button>
           )}
         </div>
       </div>

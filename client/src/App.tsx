@@ -50,6 +50,7 @@ function App() {
             <Route path="/articles/:slug" element={<SingleArticle />} />
             <Route path="/signin" element={<Auth type="sign-in" />} />
             <Route path="/signup" element={<Auth type="sign-up" />} />
+            <Route path="/profile/:id" element={<Profile />} />
           </Routes>
         </Main>
         <Footer />
