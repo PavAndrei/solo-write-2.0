@@ -1,3 +1,109 @@
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../redux/store';
+import { PageTitle } from './PageTitle';
+import { fetchArticles } from '../redux/articles/slice';
+import { BiLike } from 'react-icons/bi';
+import { GrView } from 'react-icons/gr';
+import { MdDelete } from 'react-icons/md';
+import { FaBookOpen, FaEdit } from 'react-icons/fa';
+import { Status } from '../types/apiTypes';
+import { SpinnerLoading } from './SpinnerLoading';
+import { CgSpinner } from 'react-icons/cg';
+import ErrorDisplay from './ErrorDisplay';
+import { Link } from 'react-router-dom';
+import { deleteArticle } from '../api/apiArticle';
+import { displayLocalTime } from '../utils/displayLocalTime';
+
 export const DashArticles = () => {
-  return <div>Dash Articles</div>;
+  const dispatch = useAppDispatch();
+  const { items, lastMonthArticles, totalArticles, status } = useAppSelector(
+    (state) => state.article
+  );
+
+  useEffect(() => {
+    dispatch(fetchArticles());
+  }, [dispatch]);
+
+  console.log(items);
+
+  const isSuccess = status === Status.SUCCESS;
+  const isLoading = status === Status.LOADING;
+  const isError = status === Status.ERROR;
+
+  const handleDeleteArticle = async (id: string) => {
+    const result = await deleteArticle(id);
+
+    console.log(result);
+  };
+
+  return (
+    <div className="flex flex-col gap-6 py-10 px-5">
+      <PageTitle size="sm">Articles</PageTitle>
+      <p className="text-center">Here is all the articles on the platform</p>
+      <div className="flex flex-col gap-4">
+        <span className="flex items-center gap-1.5">
+          last month articles:{' '}
+          {isLoading ? <CgSpinner className="animate-spin" /> : lastMonthArticles}
+        </span>
+        <span className="flex items-center gap-1.5">
+          totalArticles: {isLoading ? <CgSpinner className="animate-spin" /> : totalArticles}
+        </span>
+      </div>
+      {isLoading && <SpinnerLoading className="static" />}
+      {isError && <ErrorDisplay errorMessage="Can not get the articles..." />}
+      {isSuccess && (
+        <ul className="flex flex-col gap-4">
+          {items.map((item) => (
+            <li key={item._id} className="border p-4 rounded-md flex flex-col gap-2">
+              <div className="flex justify-between items-center">
+                <h5>{item.title}</h5>
+                <div className="flex gap-5">
+                  <button className="flex gap-1 items-center">
+                    <BiLike />
+                    <span>{item.likesCount}</span>
+                  </button>
+                  <button className="flex gap-1 items-center">
+                    <GrView />
+                    <span>{item.viewsCount}</span>
+                  </button>
+                </div>
+              </div>
+              <div className="flex gap-1 italic text-sm text-gray-400">
+                <span>by {item.user.username}</span>
+                <span>at {displayLocalTime(item.createdAt)}</span>
+              </div>
+              <ul className="flex gap-2">
+                {item.categories.map((category) => (
+                  <li key={category} className="p-1 rounded-md bg-gray-600">
+                    {category}
+                  </li>
+                ))}
+              </ul>
+              <div className="flex gap-5">
+                <Link
+                  to={`/articles/${item.slug}`}
+                  className="flex gap-1 items-center cursor-pointer text-gray-400 transition duration-300 ease-in-out hover:text-gray-100"
+                >
+                  <FaBookOpen />
+                  <span>Read</span>
+                </Link>
+                <button className="flex gap-1 items-center cursor-pointer text-gray-400 transition duration-300 ease-in-out hover:text-gray-100">
+                  <FaEdit />
+                  <span>Edit</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteArticle(item._id)}
+                  className="flex gap-1 items-center ml-auto mr-0 hover:text-red-600 cursor-pointer transition duration-300 ease-in-out"
+                >
+                  <MdDelete />
+                  <span>Delete</span>
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 };

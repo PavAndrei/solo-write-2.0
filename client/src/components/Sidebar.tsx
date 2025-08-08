@@ -26,7 +26,7 @@ export const Sidebar = () => {
   }, [location.search]);
 
   return (
-    <aside className="w-64 h-screen bg-gray-900 text-white flex flex-col justify-between">
+    <aside className="w-54 h-screen bg-gray-900 text-white flex flex-col justify-between">
       <div className="text-2xl font-bold px-6 py-4 border-b border-gray-800">AdminPanel</div>
 
       <nav className="mt-4 flex-1">
@@ -51,7 +51,7 @@ export const Sidebar = () => {
       <div className="px-6 py-4 border-t border-gray-800">
         <button className="flex items-center text-red-400 hover:text-red-300 transition">
           <FaSignOutAlt className="w-5 h-5 mr-3" />
-          Logout
+          Sign Out
         </button>
       </div>
     </aside>

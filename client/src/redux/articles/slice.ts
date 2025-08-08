@@ -5,7 +5,7 @@ import { ArticleList } from '../../types/types';
 
 export const fetchArticles = createAsyncThunk(
   'articles/all',
-  async (params: GetAllArticlesParams, { rejectWithValue }) => {
+  async (params?: GetAllArticlesParams, { rejectWithValue }) => {
     try {
       return await getAllArticles(params);
     } catch (err) {

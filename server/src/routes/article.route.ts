@@ -4,6 +4,7 @@ import {
   getAll,
   getOneArticle,
   toggleLike,
+  deleteArticle,
 } from '../controllers/article.controller';
 import { uploadMultiplyImages } from '../middlewares/uploadImages';
 import { verifyToken } from '../middlewares/verifyToken';
@@ -24,3 +25,5 @@ articleRouter.get('/', getAll);
 articleRouter.get('/:slug', getOneArticle);
 
 articleRouter.post('/:id/like', verifyToken, toggleLike);
+
+articleRouter.delete('/:id', verifyToken, deleteArticle);

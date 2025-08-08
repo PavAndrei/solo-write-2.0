@@ -4,6 +4,7 @@ import mongoose, { Types } from 'mongoose';
 import { errorHandler } from '../middlewares/handleErrors';
 import { MultipleImagesRequest } from '../middlewares/uploadImages';
 import User from '../models/User.model';
+import Comment from '../models/Comment.model';
 
 export const create = async (
   req: MultipleImagesRequest,
@@ -185,6 +186,68 @@ export const toggleLike = async (
       success: true,
       message: 'The article like has been toggled',
       likesCount: article.likesCount,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteArticle = async (
+  req: RequestWithUserId,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    const userId = req.userId;
+
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return next(errorHandler(400, 'Invalid or missing userId'));
+    }
+
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return next(errorHandler(400, 'Invalid article ID'));
+    }
+
+    // Проверяем роль пользователя
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(errorHandler(404, 'User not found'));
+    }
+
+    const isAdmin = user.role === 'admin';
+
+    // Для админа просто находим статью, для обычного пользователя - проверяем владельца
+    const article = isAdmin
+      ? await Article.findById(id)
+      : await Article.findOne({ _id: id, user: userId });
+
+    if (!article) {
+      return next(
+        errorHandler(
+          404,
+          'Article not found' + (isAdmin ? '' : ' or you are not the owner')
+        )
+      );
+    }
+
+    // Удаляем все комментарии, связанные с этой статьей
+    await Comment.deleteMany({ articleId: id });
+
+    // Удаляем статью
+    await Article.findByIdAndDelete(id);
+
+    // Удаляем ссылку на статью из профиля автора статьи
+    await User.findByIdAndUpdate(
+      article.user, // ID автора статьи
+      { $pull: { articles: id } },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message:
+        'The article and all related comments have been deleted successfully',
     });
   } catch (err) {
     next(err);

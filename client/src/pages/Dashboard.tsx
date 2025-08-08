@@ -22,7 +22,7 @@ export const Dashboard = () => {
   return (
     <div className="flex gap-2">
       <Sidebar />
-      <div>
+      <div className="grow">
         {tab === 'profile' && <DashProfile />}
         {tab === 'articles' && <DashArticles />}
         {tab === 'users' && <DashUsers />}

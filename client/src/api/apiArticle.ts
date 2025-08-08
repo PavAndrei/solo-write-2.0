@@ -3,6 +3,7 @@ import {
   GetAllArticlesApiResponse,
   ToggleArticleLikeApiResponse,
   GetAllArticlesParams,
+  ApiResponse,
 } from '../types/apiTypes';
 
 export const createArticle = async (formData: FormData): Promise<ApiCreateArticleResponse> => {
@@ -71,6 +72,22 @@ export const toggleArticleLike = async (id: string): Promise<ToggleArticleLikeAp
     const data = await res.json();
 
     return data as ToggleArticleLikeApiResponse;
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : 'Network error occured';
+    throw new Error(errorMessage);
+  }
+};
+
+export const deleteArticle = async (id: string): Promise<ApiResponse> => {
+  try {
+    const res = await fetch(`http://localhost:5000/api/article/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+
+    const data = await res.json();
+
+    return data as ApiResponse;
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : 'Network error occured';
     throw new Error(errorMessage);
