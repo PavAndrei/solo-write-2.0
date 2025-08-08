@@ -15,12 +15,14 @@ interface AuthState {
   user: UserData | null;
   isLoading: boolean;
   error: string | null;
+  isInitialized: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
   isLoading: false,
   error: null,
+  isInitialized: false,
 };
 
 export const loginUser = createAsyncThunk<
@@ -108,11 +110,13 @@ const authSlice = createSlice({
       .addCase(checkUserSession.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload;
+        state.isInitialized = true;
       })
       .addCase(checkUserSession.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
         state.user = null;
+        state.isInitialized = true;
       })
       .addCase(signoutUser.fulfilled, (state) => {
         state.user = null;
