@@ -39,6 +39,17 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+userSchema.virtual('comments', {
+  ref: 'Comment', // Модель, с которой связываем
+  localField: '_id', // Поле в модели User
+  foreignField: 'userData', // Поле в модели Comment
+  justOne: false, // Получаем массив комментариев
+});
+
+userSchema.virtual('commentsCount').get(function () {
+  return this.comments?.length || 0;
+});
+
 userSchema.virtual('articlesCount').get(function () {
   return this.articles?.length || 0;
 });
