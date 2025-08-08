@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getAllArticles } from '../../api/apiArticle';
+import { deleteArticle, getAllArticles } from '../../api/apiArticle';
 import { GetAllArticlesParams, Status } from '../../types/apiTypes';
 import { ArticleList } from '../../types/types';
 
@@ -8,6 +8,19 @@ export const fetchArticles = createAsyncThunk(
   async (params?: GetAllArticlesParams, { rejectWithValue }) => {
     try {
       return await getAllArticles(params);
+    } catch (err) {
+      return rejectWithValue({
+        message: err instanceof Error ? err.message : 'Unknown error',
+      });
+    }
+  }
+);
+
+export const deleteArticleThunk = createAsyncThunk(
+  'articles/deleteOne',
+  async (id: string, { rejectWithValue }) => {
+    try {
+      return await deleteArticle(id);
     } catch (err) {
       return rejectWithValue({
         message: err instanceof Error ? err.message : 'Unknown error',
@@ -42,6 +55,9 @@ const articleSlice = createSlice({
         article.likedBy = likedBy;
       }
     },
+    optimisticDeleteArticle: (state, action) => {
+      state.items = state.items.filter((article) => article._id !== action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchArticles.pending, (state) => {
@@ -62,9 +78,20 @@ const articleSlice = createSlice({
       state.lastMonthArticles = 0;
       state.totalArticles = 0;
     });
+    builder.addCase(deleteArticleThunk.fulfilled, (state) => {
+      state.totalArticles = Math.max(0, state.totalArticles - 1);
+      // Обновляем количество статей за последний месяц
+      const now = new Date();
+      const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+      state.items = state.items.filter((article) => {
+        const articleDate = new Date(article.createdAt);
+        return articleDate >= oneMonthAgo;
+      });
+      state.lastMonthArticles = state.items.length;
+    });
   },
 });
 
-export const { updateCardLikes } = articleSlice.actions;
+export const { updateCardLikes, optimisticDeleteArticle } = articleSlice.actions;
 
 export default articleSlice.reducer;

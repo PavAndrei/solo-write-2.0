@@ -1,7 +1,11 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/store';
 import { PageTitle } from './PageTitle';
-import { fetchArticles } from '../redux/articles/slice';
+import {
+  deleteArticleThunk,
+  fetchArticles,
+  optimisticDeleteArticle,
+} from '../redux/articles/slice';
 import { BiLike } from 'react-icons/bi';
 import { GrView } from 'react-icons/gr';
 import { MdDelete } from 'react-icons/md';
@@ -11,8 +15,8 @@ import { SpinnerLoading } from './SpinnerLoading';
 import { CgSpinner } from 'react-icons/cg';
 import ErrorDisplay from './ErrorDisplay';
 import { Link } from 'react-router-dom';
-import { deleteArticle } from '../api/apiArticle';
 import { displayLocalTime } from '../utils/displayLocalTime';
+import { addToast } from '../redux/toast/slice';
 
 export const DashArticles = () => {
   const dispatch = useAppDispatch();
@@ -26,15 +30,27 @@ export const DashArticles = () => {
 
   console.log(items);
 
+  const handleDeleteArticle = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this article?')) {
+      return;
+    }
+
+    dispatch(optimisticDeleteArticle(id));
+
+    try {
+      await dispatch(deleteArticleThunk(id)).unwrap();
+      dispatch(addToast({ color: 'success', text: 'Article deleted successfully' }));
+      dispatch(fetchArticles());
+    } catch (err) {
+      console.error('Failed to delete article:', err);
+      dispatch(addToast({ color: 'error', text: 'Failed to delete article' }));
+      dispatch(fetchArticles());
+    }
+  };
+
   const isSuccess = status === Status.SUCCESS;
   const isLoading = status === Status.LOADING;
   const isError = status === Status.ERROR;
-
-  const handleDeleteArticle = async (id: string) => {
-    const result = await deleteArticle(id);
-
-    console.log(result);
-  };
 
   return (
     <div className="flex flex-col gap-6 py-10 px-5">
