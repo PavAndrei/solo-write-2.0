@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { IoLogInOutline } from 'react-icons/io5';
-import { FaUserPlus, FaPenAlt } from 'react-icons/fa';
+import { FaUserPlus, FaPenAlt, FaUser } from 'react-icons/fa';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { MdArticle } from 'react-icons/md';
 
@@ -59,6 +59,11 @@ export const Header = () => {
                 <Button onClickFunc={handleSignout} className="order-4 hidden md:flex">
                   Sign Out
                 </Button>
+                <Link to="/dashboard?tab=profile">
+                  <Button variant={pathname === '/dashboard' ? 'dark' : 'light'}>
+                    <FaUser /> Dashboard
+                  </Button>
+                </Link>
                 <Link to="/editor">
                   <Button variant={pathname === '/editor' ? 'dark' : 'light'}>
                     <FaPenAlt /> Publish

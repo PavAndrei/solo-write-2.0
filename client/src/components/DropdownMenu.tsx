@@ -36,39 +36,46 @@ export const DropdownMenu: FC<DropdownMenu> = ({ visibility, closeDropdown }) =>
     >
       <IoClose onClick={closeDropdown} className="self-end text-2xl sm:text-3xl mr-2" />
       <ul className="flex flex-col gap-2.5">
+        <li className="border-b border-b-gray-400 pb-2.5">
+          <Link to="/dashboard?tab=profile" onClick={closeDropdown}>
+            Profile
+          </Link>
+        </li>
+        <li className="border-b border-b-gray-400 pb-2.5">
+          <Link to="/editor" onClick={closeDropdown}>
+            Write An Article
+          </Link>
+        </li>
+        <li className="border-b border-b-gray-400 pb-2.5">
+          <Link to="/articles" onClick={closeDropdown}>
+            Articles
+          </Link>
+        </li>
         {isAuthorized ? (
-          <button
-            onClick={() => {
-              handleSignout();
-              closeDropdown();
-            }}
-            className="border-b border-b-gray-400 pb-2.5 bg-inherit"
-          >
-            Sign Out
-          </button>
+          <li className="pb-2.5 bg-inherit">
+            <button
+              onClick={() => {
+                handleSignout();
+                closeDropdown();
+              }}
+            >
+              Sign Out
+            </button>
+          </li>
         ) : (
           <>
-            <Link
-              to="/signin"
-              onClick={closeDropdown}
-              className="border-b border-b-gray-400 pb-2.5"
-            >
-              Sign In
-            </Link>
-            <Link
-              to="/signup"
-              onClick={closeDropdown}
-              className="border-b border-b-gray-400 pb-2.5"
-            >
-              Sign Up
-            </Link>
+            <li className="border-b border-b-gray-400 pb-2.5">
+              <Link to="/signin" onClick={closeDropdown}>
+                Sign In
+              </Link>
+            </li>
+            <li className="border-b border-b-gray-400 pb-2.5">
+              <Link to="/signup" onClick={closeDropdown}>
+                Sign Up
+              </Link>
+            </li>
           </>
         )}
-
-        <Link to="/editor" onClick={closeDropdown} className="border-b border-b-gray-400 pb-2.5">
-          Write An Article
-        </Link>
-        <li className="pb-2.5">Catalogue</li>
       </ul>
     </div>
   );
