@@ -117,7 +117,7 @@ export const Articles = () => {
               <div className="flex flex-col gap-4 relative">
                 <Categories />
                 <div className="flex items-center gap-5 flex-wrap">
-                  <ToggleSortButton />
+                  <ToggleSortButton isLeftGap />
                   <div className="flex gap-1 items-center">
                     lastMonthArticles:{' '}
                     {isLoading ? <CgSpinner className="animate-spin" /> : lastMonthArticles}
